@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/anton</item>
+        <item>@font/bebas_neue</item>
+        <item>@font/holtwood_one_sc</item>
+        <item>@font/mitr_medium</item>
+        <item>@font/mouse_memoirs</item>
+        <item>@font/odibee_sans</item>
+        <item>@font/vampiro_one</item>
+    </array>
+</resources>

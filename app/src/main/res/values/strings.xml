@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Lieu</string>
+    <string name="lieu">LIEU</string>
+    <string name="send">Send</string>
+    <string name="phone_number">Insert your phone number</string>
+
+</resources>
