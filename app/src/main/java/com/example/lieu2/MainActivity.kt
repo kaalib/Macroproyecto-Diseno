@@ -25,6 +25,8 @@ import com.google.android.gms.location.LocationRequest
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.Socket
+import java.io.PrintWriter
 
 class MainActivity : AppCompatActivity() {
 
@@ -78,8 +80,9 @@ class MainActivity : AppCompatActivity() {
                             binding.textViewLon.text = locationInfoLon
                             binding.textViewTim.text = locationInfoTim
 
-                            // sending data to UDP
+                            // sending data to UDP and TCP
                             sendUDPData(location.latitude, location.longitude, location.time)
+                            sendTCPData(location.latitude, location.longitude, location.time)
                         }
                     } else {
                         Toast.makeText(this, "Please Turn on the location", Toast.LENGTH_SHORT).show()
@@ -162,6 +165,22 @@ class MainActivity : AppCompatActivity() {
                 socket.send(packet)
 
                 // closing socket
+                socket.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        thread.start()
+    }
+
+    private fun sendTCPData(latitude: Double, longitude: Double, timestamp: Long) {
+        val thread = Thread {
+            try {
+                val socket = Socket("181.235.95.11", 12222) // IP and port number
+                val writer = PrintWriter(socket.getOutputStream(), true)
+                val message = "Latitude: $latitude, Longitude: $longitude, Time: $timestamp"
+                writer.println(message)
+                writer.close()
                 socket.close()
             } catch (e: Exception) {
                 e.printStackTrace()
