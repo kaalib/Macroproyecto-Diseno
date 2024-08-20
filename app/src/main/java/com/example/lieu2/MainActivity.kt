@@ -4,11 +4,7 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Bundle
 import android.Manifest
-import android.content.pm.PackageManager
-import android.telephony.SmsManager
-import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
@@ -26,17 +22,16 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.location.LocationRequest
-
-
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var phoneNumber: EditText
     private lateinit var btnGetLocation: Button
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private var locationInfo: String? = null
     private var locationInfoLat: String? = null
     private var locationInfoLon: String? = null
     private var locationInfoTim: String? = null
@@ -50,11 +45,9 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        phoneNumber = findViewById(R.id.PhoneNumber)
         btnGetLocation = findViewById(R.id.btnGetLocation)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
 
         val locationPermissionRequest = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -75,9 +68,7 @@ class MainActivity : AppCompatActivity() {
                             CancellationTokenSource().token
                         )
                         result.addOnCompleteListener {
-                            val location  = it.result
-
-                            locationInfo = "Latitude: ${location.latitude}\nLongitude: ${location.longitude}\nTime: ${location.time}"
+                            val location = it.result
 
                             locationInfoLat = "Latitude: ${location.latitude}"
                             locationInfoLon = "Longitude: ${location.longitude}"
@@ -86,11 +77,12 @@ class MainActivity : AppCompatActivity() {
                             binding.textViewLat.text = locationInfoLat
                             binding.textViewLon.text = locationInfoLon
                             binding.textViewTim.text = locationInfoTim
-                            sendSMS()
+
+                            // sending data to UDP
+                            sendUDPData(location.latitude, location.longitude, location.time)
                         }
                     } else {
-                        Toast.makeText(this, "Please Turn on the location", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this, "Please Turn on the location", Toast.LENGTH_SHORT).show()
                         createLocationRequest()
                     }
                 }
@@ -108,23 +100,6 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
-
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.SEND_SMS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), 100)
-            }
-        }
-
-        ActivityCompat.OnRequestPermissionsResultCallback { requestCode, permissions, grantResults ->
-            if (requestCode == 100 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Re-attempt to send SMS if permission is granted
-                sendSMS()
-            } else {
-                Toast.makeText(this, "SMS permissions denied", Toast.LENGTH_SHORT).show()
-            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -158,7 +133,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -172,16 +146,28 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    private fun sendSMS() {
-        val phone = phoneNumber.text.toString()
+    private fun sendUDPData(latitude: Double, longitude: Double, timestamp: Long) {
+        val thread = Thread {
+            try {
+                // Creating socket UDP
+                val socket = DatagramSocket()
+                val message = "Latitude: $latitude, Longitude: $longitude, Time: $timestamp"
+                // Translate message to binary
+                val data = message.toByteArray()
+                // IP address and UDP port
+                val address = InetAddress.getByName("181.235.95.11")
+                val port = 5055
+                val packet = DatagramPacket(data, data.size, address, port)
 
-        if (phone.isNotEmpty() && locationInfo != null) {
-            val smsManager = SmsManager.getDefault()
-            smsManager.sendTextMessage(phone, null, locationInfo, null, null)
-            Toast.makeText(this, "SMS sent", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Please enter phone number", Toast.LENGTH_SHORT).show()
+                socket.send(packet)
+
+                // closing socket
+                socket.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
+        thread.start()
     }
-
 }
+
