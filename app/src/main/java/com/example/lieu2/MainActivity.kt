@@ -29,7 +29,7 @@ import java.net.Socket
 import java.io.PrintWriter
 
 class MainActivity : AppCompatActivity() {
-
+    // attributes
     private lateinit var btnGetLocation: Button
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
