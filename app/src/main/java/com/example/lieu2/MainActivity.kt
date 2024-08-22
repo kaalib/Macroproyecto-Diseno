@@ -152,18 +152,23 @@ class MainActivity : AppCompatActivity() {
     private fun sendUDPData(latitude: Double, longitude: Double, timestamp: Long) {
         val thread = Thread {
             try {
-                // Creating socket UDP
                 val socket = DatagramSocket()
                 val message = "Latitude: $latitude, Longitude: $longitude, Time: $timestamp"
-                // Translate message to binary
                 val data = message.toByteArray()
-                // IP address and UDP port
-                val address = InetAddress.getByName("181.235.95.11")
-                val port = 5055
-                val packet = DatagramPacket(data, data.size, address, port)
 
-                socket.send(packet)
 
+                // first IP address and UDP port
+                val addressCarlos = InetAddress.getByName("181.235.95.11")
+                val portCarlos = 5055
+                val packetCarlos = DatagramPacket(data, data.size, addressCarlos, portCarlos)
+
+                // second IP address and UDP port
+                val addressKaren = InetAddress.getByName("181.235.28.197")
+                val portKaren = 23654
+                val packetKaren = DatagramPacket(data, data.size, addressKaren, portKaren)
+
+                socket.send(packetCarlos)
+                socket.send(packetKaren)
                 // closing socket
                 socket.close()
             } catch (e: Exception) {
@@ -176,12 +181,23 @@ class MainActivity : AppCompatActivity() {
     private fun sendTCPData(latitude: Double, longitude: Double, timestamp: Long) {
         val thread = Thread {
             try {
-                val socket = Socket("181.235.95.11", 12222) // IP and port number
-                val writer = PrintWriter(socket.getOutputStream(), true)
+
                 val message = "Latitude: $latitude, Longitude: $longitude, Time: $timestamp"
-                writer.println(message)
-                writer.close()
-                socket.close()
+
+
+                val socketCarlos = Socket("181.235.95.11", 12222) // IP and port number
+                val writerCarlos = PrintWriter(socketCarlos.getOutputStream(), true)
+                writerCarlos.println(message)
+                writerCarlos.close()
+                socketCarlos.close()
+
+                val socketKaren = Socket("181.235.28.197", 23653) // IP and port number
+                val writerKaren = PrintWriter(socketKaren.getOutputStream(), true)
+                writerKaren.println(message)
+                writerKaren.close()
+                socketKaren.close()
+
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
