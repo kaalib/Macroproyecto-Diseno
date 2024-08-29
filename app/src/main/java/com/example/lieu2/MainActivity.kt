@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Bundle
 import android.Manifest
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -17,11 +20,19 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.lieu2.databinding.ActivityMainBinding
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -30,13 +41,13 @@ import java.io.PrintWriter
 
 class MainActivity : AppCompatActivity() {
     // attributes
-    private lateinit var btnGetLocation: Button
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var locationInfoLat: String? = null
     private var locationInfoLon: String? = null
     private var locationInfoTim: String? = null
+    private var job: Job? = null
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +57,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        btnGetLocation = findViewById(R.id.btnGetLocation)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -65,25 +74,8 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Location access granted", Toast.LENGTH_SHORT).show()
 
                     if (isLocationEnabled()) {
-                        val result = fusedLocationProviderClient.getCurrentLocation(
-                            Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-                            CancellationTokenSource().token
-                        )
-                        result.addOnCompleteListener {
-                            val location = it.result
+                        createLocationRequest()
 
-                            locationInfoLat = "Latitude: ${location.latitude}"
-                            locationInfoLon = "Longitude: ${location.longitude}"
-                            locationInfoTim = "Time: ${location.time}"
-
-                            binding.textViewLat.text = locationInfoLat
-                            binding.textViewLon.text = locationInfoLon
-                            binding.textViewTim.text = locationInfoTim
-
-                            // sending data to UDP and TCP
-                            sendUDPData(location.latitude, location.longitude, location.time)
-                            sendTCPData(location.latitude, location.longitude, location.time)
-                        }
                     } else {
                         Toast.makeText(this, "Please Turn on the location", Toast.LENGTH_SHORT).show()
                         createLocationRequest()
@@ -96,14 +88,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.btnGetLocation.setOnClickListener {
-            locationPermissionRequest.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
+
+        locationPermissionRequest.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
-        }
+        )
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -112,11 +104,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun createLocationRequest() {
+
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
             10000
-        ).setMinUpdateIntervalMillis(5000).build()
+        ).setMinUpdateIntervalMillis(10000).build()
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                for (location in locationResult.locations) {
+
+                    locationInfoLat = "Latitude: ${location.latitude}"
+                    locationInfoLon = "Longitude: ${location.longitude}"
+                    locationInfoTim = "Time: ${location.time}"
+
+                    binding.textViewLat.text = locationInfoLat
+                    binding.textViewLon.text = locationInfoLon
+                    binding.textViewTim.text = locationInfoTim
+
+                    sendUDPData(location.latitude, location.longitude, location.time)
+                    sendTCPData(location.latitude, location.longitude, location.time)
+
+                }
+            }
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null)
+
+
 
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         val client = LocationServices.getSettingsClient(this)
@@ -138,6 +155,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun isLocationEnabled(): Boolean {
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
@@ -158,12 +177,12 @@ class MainActivity : AppCompatActivity() {
 
 
                 // first IP address and UDP port
-                val addressCarlos = InetAddress.getByName("181.235.95.11")
+                val addressCarlos = InetAddress.getByName("proyectoddnscarlos.ddns.net")
                 val portCarlos = 5055
                 val packetCarlos = DatagramPacket(data, data.size, addressCarlos, portCarlos)
 
                 // second IP address and UDP port
-                val addressKaren = InetAddress.getByName("181.235.28.197")
+                val addressKaren = InetAddress.getByName("proyectoddns.ddns.net")
                 val portKaren = 23654
                 val packetKaren = DatagramPacket(data, data.size, addressKaren, portKaren)
 
@@ -185,13 +204,13 @@ class MainActivity : AppCompatActivity() {
                 val message = "Latitude: $latitude, Longitude: $longitude, Time: $timestamp"
 
 
-                val socketCarlos = Socket("181.235.95.11", 12222) // IP and port number
+                val socketCarlos = Socket("proyectoddnscarlos.ddns.net", 12222) // IP and port number
                 val writerCarlos = PrintWriter(socketCarlos.getOutputStream(), true)
                 writerCarlos.println(message)
                 writerCarlos.close()
                 socketCarlos.close()
 
-                val socketKaren = Socket("181.235.28.197", 23653) // IP and port number
+                val socketKaren = Socket("proyectoddns.ddns.net", 23653) // IP and port number
                 val writerKaren = PrintWriter(socketKaren.getOutputStream(), true)
                 writerKaren.println(message)
                 writerKaren.close()
