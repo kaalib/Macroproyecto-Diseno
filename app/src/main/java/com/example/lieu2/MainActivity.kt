@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Bundle
 import android.Manifest
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -112,14 +115,18 @@ class MainActivity : AppCompatActivity() {
             10000
         ).setMinUpdateIntervalMillis(10000).build()
 
+        val sdfApp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 for (location in locationResult.locations) {
 
+                    val formattedTime = sdfApp.format(Date(location.time))
+
                     locationInfoLat = "Latitude: ${location.latitude}"
                     locationInfoLon = "Longitude: ${location.longitude}"
-                    locationInfoTim = "Time: ${location.time}"
+                    locationInfoTim = "Time: $formattedTime"
 
                     binding.textViewLat.text = locationInfoLat
                     binding.textViewLon.text = locationInfoLon
@@ -172,7 +179,11 @@ class MainActivity : AppCompatActivity() {
         val thread = Thread {
             try {
                 val socket = DatagramSocket()
-                val message = "Latitude: $latitude, Longitude: $longitude, Time: $timestamp"
+
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val formattedTime = sdf.format(Date(timestamp))
+
+                val message = "$latitude,$longitude,$formattedTime"
                 val data = message.toByteArray()
 
 
