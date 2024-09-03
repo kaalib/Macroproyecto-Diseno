@@ -1,19 +1,35 @@
-async function fetchLocationData() {
-    try {
-        const response = await fetch('/data');
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-
-        document.getElementById('latitude').textContent = data.latitude || 'N/A';
-        document.getElementById('longitude').textContent = data.longitude || 'N/A';
-        const localDateTime = new Date(data.timestamp)
-        document.getElementById('timestamp').textContent = localDateTime.toDateString('en-GB') || 'N/A';
-    } catch (error) {
-        console.error('Error fetching location data:', error);
-    }
+function fetchLatestLocation() {
+    fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('latitude').innerText = data.latitude;
+            document.getElementById('longitude').innerText = data.longitude;
+            const timestamp = convertToLocalTime(data.timestamp);
+            const date = timestamp.split(', ')[0];
+            const time = timestamp.split(', ')[1];
+            document.getElementById('date').innerText = date;
+            document.getElementById('time').innerText = time;
+        })
+        .catch(err => console.error('Error fetching latest location:', err));
 }
 
-fetchLocationData();
-setInterval(fetchLocationData, 1000); // Refresh data every second
+function convertToLocalTime(utcDateString) {
+    const localDate = new Date(utcDateString); 
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'America/Bogota'
+    };   
+    return localDate.toLocaleString('en-GB', options); // Format as needed
+}
+
+// Fetch the latest location every second
+setInterval(fetchLatestLocation, 1000);
+
+// Initial fetch
+fetchLatestLocation();
