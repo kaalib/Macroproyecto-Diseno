@@ -4,7 +4,8 @@ const mysql = require('mysql2');
 const app = express();
 const port = 80;
 
-// Configurar la conexión a la base de datos
+const DDNS_HOST = 'proyectoddnscarlos.ddns.net'; 
+
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'isa22',
@@ -18,7 +19,6 @@ let locationData = {
     timestamp: 'N/A'
 };
 
-// Función para obtener datos de la base de datos
 function fetchDataFromDatabase() {
     pool.query('SELECT latitude, longitude, timestamp FROM coordinates ORDER BY timestamp DESC LIMIT 1', (err, results) => {
         if (err) {
@@ -36,23 +36,18 @@ function fetchDataFromDatabase() {
     });
 }
 
-// Actualizar datos cada segundo
-setInterval(fetchDataFromDatabase, 1000);
+setInterval(fetchDataFromDatabase, 8000);
 
-// Configurar la carpeta pública para servir archivos estáticos de la aplicación React
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ruta para obtener datos de ubicación
 app.get('/data', (req, res) => {
     res.json(locationData);
 });
 
-// Ruta para enviar todos los demás requests a la aplicación React
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Iniciar el servidor
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+    console.log(`Server running on http://${DDNS_HOST}`);
 });

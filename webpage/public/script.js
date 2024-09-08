@@ -25,11 +25,9 @@ function convertToLocalTime(utcDateString) {
         hour12: false,
         timeZone: 'America/Bogota'
     };   
-    return localDate.toLocaleString('en-GB', options); // Format as needed
+    return localDate.toLocaleString('en-GB', options);
 }
 
-// Fetch the latest location every second
 setInterval(fetchLatestLocation, 1000);
 
-// Initial fetch
 fetchLatestLocation();
