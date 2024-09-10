@@ -1,16 +1,18 @@
+require('dotenv').config(); // Carga las variables de entorno desde el archivo .env
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
 const app = express();
 const port = 80;
 
-const DDNS_HOST = 'proyectoddnscarlos.ddns.net'; 
+// Usa las variables de entorno
+const DDNS_HOST = process.env.DDNS_HOST; 
 
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'isa22',
-    password: 'karen4',
-    database: 'DesignProject'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
 let locationData = {
@@ -51,3 +53,4 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on http://${DDNS_HOST}`);
 });
+
