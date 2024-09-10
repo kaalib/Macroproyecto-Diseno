@@ -1,16 +1,21 @@
 import socket
 import pymysql
+import os
+from dotenv import load_dotenv
 
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
-UDP_IP = "0.0.0.0" 
+UDP_IP = "0.0.0.0"
 UDP_PORT = 5055
-BUFFER_SIZE = 1024 
+BUFFER_SIZE = 1024
 
+# Usar las variables de entorno
 db = pymysql.connect(
-    host="localhost",
-    user="isa22",
-    password="karen4",
-    database="DesignProject"
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_DATABASE")
 )
 
 cursor = db.cursor()

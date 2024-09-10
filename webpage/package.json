@@ -17,6 +17,7 @@
   "homepage": "https://github.com/kaalib/Macroproyecto-Diseno#readme",
   "description": "",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mysql2": "^3.11.0"
   }
