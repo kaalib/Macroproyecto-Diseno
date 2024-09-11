@@ -1,14 +1,49 @@
+let map;
+let marker;
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 0, lng: 0 },
+        zoom: 12
+    });
+    marker = new google.maps.Marker({
+        position: { lat: 0, lng: 0 },
+        map: map
+    });
+    fetchLatestLocation(); 
+}
+
+function loadMap() {
+    fetch('/api_key')
+        .then(response => response.json())
+        .then(data => {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        })
+        .catch(err => console.error('Error fetching API key:', err));
+}
+
+loadMap();
+
 function fetchLatestLocation() {
     fetch('/data')
         .then(response => response.json())
         .then(data => {
             document.getElementById('latitude').innerText = data.latitude;
             document.getElementById('longitude').innerText = data.longitude;
+
             const timestamp = convertToLocalTime(data.timestamp);
             const date = timestamp.split(', ')[0];
             const time = timestamp.split(', ')[1];
             document.getElementById('date').innerText = date;
             document.getElementById('time').innerText = time;
+
+            const latLng = new google.maps.LatLng(data.latitude, data.longitude);
+            map.setCenter(latLng);
+            marker.setPosition(latLng);
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
@@ -30,4 +65,3 @@ function convertToLocalTime(utcDateString) {
 
 setInterval(fetchLatestLocation, 1000);
 
-fetchLatestLocation();
