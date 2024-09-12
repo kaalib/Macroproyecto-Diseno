@@ -58,8 +58,8 @@ function convertToLocalTime(utcDateString) {
         minute: '2-digit',
         second: '2-digit',
         hour12: false,
-        timeZone: 'America/Bogota' // Asegúrate de que la zona horaria sea correcta
-    };   
+        timeZone: 'UTC' // Asegúrate de que la zona horaria sea correcta
+    }; 
     
     const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(localDate);
     return formattedDate;
