@@ -13,11 +13,9 @@
         }
 
         /* header */
-        header {
-            background-color: #e0e0e0; 
-            color: #6F2F9E;
+         header {
+            background-color: #6F2F9E; 
             display: flex;
-            align-items: center;
             justify-content: center;
             padding: 20px;
             position: sticky;
@@ -25,19 +23,6 @@
             width: 100%;
             z-index: 1000;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        header img {
-            height: 50px;
-            margin-right: 20px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 48px;
-            font-weight: bold;
-            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-            color: #6F2F9E;
         }
 
         .container {
@@ -55,6 +40,29 @@
             justify-content: center;
         }
 
+        /* Estilo para la imagen */
+        .left-section img {
+            height: 150px;
+            margin-bottom: 20px; /* Espacio entre imagen y texto */
+        }
+
+        /* Estilo para el texto LIEU con efecto 3D */
+        .left-section h1 {
+            font-size: 100px; /* Tamaño del texto grande para igualar la imagen */
+            font-weight: bold;
+            color: #6F2F9E;
+            margin: 0;
+            text-align: center;
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra para simular 3D */
+            font-family: 'Arial', sans-serif; /* Puedes cambiar a otra fuente si prefieres */
+        }
+
+        .data {
+            margin: 10px 0;
+            text-align: center;
+            color: #000000;
+        }
+
         .right-section {
             width: 55%;
         }
@@ -67,29 +75,24 @@
             text-align: center;
         }
 
-        .data {
-            margin: 10px 0;
-            text-align: center;
-        }
-
         #map {
             height: 500px;
             width: 100%;
             border-radius: 15px;
         }
+
     </style>
 </head>
 <body>
     <!-- Header (logo n name) -->
-    <header>
-        <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
-        <h1>LIEU</h1>
-    </header>
+    <header>  </header>
 
     <div class="container">
         <!-- left section -->
         <div class="left-section">
-            <h2>You are here</h2> 
+                <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
+                <h1>LIEU</h1>
+	    <h2>You are here</h2> 
             <div class="data">
                 <strong>Latitude:</strong> <span id="latitude">Loading...</span>
             </div>
