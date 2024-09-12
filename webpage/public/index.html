@@ -3,37 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation Data</title>
+    <title>LIEU</title>
     <style>
-        #map {
-            height: 400px;
+        /* Ocultar barra de desplazamiento */
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Evita desplazamiento horizontal */
+        }
+
+        /* header */
+        header {
+            background-color: #e0e0e0; 
+            color: #6F2F9E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: sticky;
+            top: 0;
             width: 100%;
+            z-index: 1000;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        header img {
+            height: 50px;
+            margin-right: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+            color: #6F2F9E;
+        }
+
         .container {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 40px auto; /* to ensure distance between header and body */
         }
+
+        .left-section {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .right-section {
+            width: 55%;
+        }
+
+        h2 {
+            color: #6F2F9E;
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
         .data {
-            margin: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 15px;
         }
     </style>
 </head>
 <body>
+    <!-- Header (logo n name) -->
+    <header>
+        <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
+        <h1>LIEU</h1>
+    </header>
+
     <div class="container">
-        <h1>Geolocation Data</h1>
-        <div class="data">
-            <strong>Latitude:</strong> <span id="latitude">Loading...</span>
+        <!-- left section -->
+        <div class="left-section">
+            <h2>You are here</h2> 
+            <div class="data">
+                <strong>Latitude:</strong> <span id="latitude">Loading...</span>
+            </div>
+            <div class="data">
+                <strong>Longitude:</strong> <span id="longitude">Loading...</span>
+            </div>
+            <div class="data">
+                <strong>Date:</strong> <span id="date">Loading...</span>
+            </div>
+            <div class="data">
+                <strong>Time:</strong> <span id="time">Loading...</span>
+            </div>
         </div>
-        <div class="data">
-            <strong>Longitude:</strong> <span id="longitude">Loading...</span>
+
+        <!-- right section -->
+        <div class="right-section">
+            <div id="map"></div>
         </div>
-        <div class="data">
-            <strong>Date:</strong> <span id="date">Loading...</span>
-        </div>
-        <div class="data">
-            <strong>Time:</strong> <span id="time">Loading...</span>
-        </div>
-        <div id="map"></div>
     </div>
 
     <script src="script.js"></script>
