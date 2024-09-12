@@ -188,17 +188,20 @@ class MainActivity : AppCompatActivity() {
 
 
                 // first IP address and UDP port
-                val addressCarlos = InetAddress.getByName("proyectoddnscarlos.ddns.net")
-                val portCarlos = 5055
-                val packetCarlos = DatagramPacket(data, data.size, addressCarlos, portCarlos)
+                val port = 5055
+                val addressCarlos = InetAddress.getByName("lieucarlos.ddns.net")
+                val packetCarlos = DatagramPacket(data, data.size, addressCarlos, port)
 
                 // second IP address and UDP port
-                val addressKaren = InetAddress.getByName("proyectoddns.ddns.net")
-                val portKaren = 23654
-                val packetKaren = DatagramPacket(data, data.size, addressKaren, portKaren)
+                val addressKaren = InetAddress.getByName("lieukaren.ddns.net")
+                val packetKaren = DatagramPacket(data, data.size, addressKaren, port)
 
+                val addressIsa = InetAddress.getByName("lieuisa.ddns.net")
+                val packetIsa = DatagramPacket(data, data.size, addressIsa, port)
                 socket.send(packetCarlos)
                 socket.send(packetKaren)
+                socket.send(packetIsa)
+
                 // closing socket
                 socket.close()
             } catch (e: Exception) {
