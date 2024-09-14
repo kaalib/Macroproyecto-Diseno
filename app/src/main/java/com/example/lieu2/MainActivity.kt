@@ -7,8 +7,6 @@ import android.Manifest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
@@ -189,15 +187,21 @@ class MainActivity : AppCompatActivity() {
 
                 // first IP address and UDP port
                 val port = 5055
-                val addressCarlos = InetAddress.getByName("lieucarlos.ddns.net")
-                val packetCarlos = DatagramPacket(data, data.size, addressCarlos, port)
 
-                // second IP address and UDP port
-                val addressKaren = InetAddress.getByName("lieukaren.ddns.net")
-                val packetKaren = DatagramPacket(data, data.size, addressKaren, port)
 
                 val addressIsa = InetAddress.getByName("lieuisa.ddns.net")
                 val packetIsa = DatagramPacket(data, data.size, addressIsa, port)
+
+
+                val addressCarlos = InetAddress.getByName("lieucarlos.ddns.net")
+                val packetCarlos = DatagramPacket(data, data.size, addressCarlos, port)
+
+                // last IP address and UDP port
+                val addressKaren = InetAddress.getByName("lieukaren.ddns.net")
+                val packetKaren = DatagramPacket(data, data.size, addressKaren, port)
+
+
+
                 socket.send(packetCarlos)
                 socket.send(packetKaren)
                 socket.send(packetIsa)
