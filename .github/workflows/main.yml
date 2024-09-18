@@ -3,7 +3,7 @@ name: Deploy Workflow
 on:
   push:
     branches:
-      - main  # when a push is executed in the main branch
+      - master  # when a push is executed in the master
 
 jobs:
   deploy:
