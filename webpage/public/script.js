@@ -1,5 +1,8 @@
 let map;
 let marker;
+let polyline;  
+let path = []; 
+
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -11,7 +14,17 @@ function initMap() {
         map: map
     });
     fetchLatestLocation(); 
+
+    polyline = new google.maps.Polyline({
+        path: path,  
+        strokeColor: '4b00821', 
+        strokeOpacity: 1.0,  
+        strokeWeight: 2,  
+        map: map  
+    });
+
 }
+
 
 function loadMap() {
     fetch('/api_key')
@@ -44,6 +57,11 @@ function fetchLatestLocation() {
             const latLng = new google.maps.LatLng(data.latitude, data.longitude);
             map.setCenter(latLng);
             marker.setPosition(latLng);
+
+            path.push(latLng);
+            polyline.setPath(path);
+
+            setTimeout(() => {path = []; polyline.setPath(path);}, 30000); 
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
