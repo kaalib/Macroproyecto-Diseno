@@ -2,6 +2,7 @@ let map;
 let marker;
 let polyline;
 let path = [];
+let directionsService;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -14,16 +15,31 @@ function initMap() {
         map: map
     });
 
+    directionsService = new google.maps.DirectionsService();
+
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
         path: path,
         strokeColor: '#6F2F9E', // Color morado
         strokeOpacity: 1.0,
         strokeWeight: 5,
+        geodesic: true,
         map: map
     });
 
     fetchLatestLocation(); // Llama a la función que obtiene la ubicación
+}
+
+// Función para redondear a 3 cifras significativas
+function roundToSignificantDigits(num, n) {
+    if(num === 0) {
+        return 0;
+    }
+    const d = Math.ceil(Math.log10(Math.abs(num)));
+    const power = n - d;
+    const magnitude = Math.pow(10, power);
+    const shifted = Math.round(num * magnitude);
+    return shifted / magnitude;
 }
 
 // Carga el mapa con la clave de la API de Google Maps
@@ -47,32 +63,56 @@ function fetchLatestLocation() {
     fetch('/data')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('latitude').innerText = data.latitude;
-            document.getElementById('longitude').innerText = data.longitude;
+            const roundedLat = roundToSignificantDigits(data.latitude, 3);
+            const roundedLng = roundToSignificantDigits(data.longitude, 3);
+
+            document.getElementById('latitude').innerText = roundedLat;
+            document.getElementById('longitude').innerText = roundedLng;
 
             const timestamp = convertToLocalTime(data.timestamp);
             const [date, time] = timestamp.split(', ');
             document.getElementById('date').innerText = date;
             document.getElementById('time').innerText = time;
 
-            const latLng = new google.maps.LatLng(data.latitude, data.longitude);
+            const latLng = new google.maps.LatLng(roundedLat, roundedLng);
             map.setCenter(latLng);
             marker.setPosition(latLng);
 
-            // Añade el nuevo punto a la ruta
-            path.push(latLng);
-            
-            // Actualiza la polilínea con la nueva ruta
-            polyline.setPath(path);
+            updateRoute(latLng);
+        })
+        .catch(err => console.error('Error fetching latest location:', err));
+}
 
-            // Si la ruta tiene más de 2 puntos, ajusta el zoom para que se vea toda la ruta
-            if (path.length > 2) {
+function updateRoute(newPoint) {
+    if (path.length === 0) {
+        path.push(newPoint);
+        polyline.setPath(path);
+    } else {
+        const lastPoint = path[path.length - 1];
+        const request = {
+            origin: lastPoint,
+            destination: newPoint,
+            travelMode: 'DRIVING'
+        };
+
+        directionsService.route(request, (result, status) => {
+            if (status === 'OK') {
+                const newPath = result.routes[0].overview_path;
+                path = path.concat(newPath);
+                polyline.setPath(path);
+
+                // Ajustar el zoom para ver toda la ruta
                 const bounds = new google.maps.LatLngBounds();
                 path.forEach(point => bounds.extend(point));
                 map.fitBounds(bounds);
+            } else {
+                console.error('Error al obtener la ruta:', status);
+                // Si falla la obtención de la ruta, simplemente añadimos el punto
+                path.push(newPoint);
+                polyline.setPath(path);
             }
-        })
-        .catch(err => console.error('Error fetching latest location:', err));
+        });
+    }
 }
 
 // Función para convertir UTC a la hora local
