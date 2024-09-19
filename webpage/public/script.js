@@ -32,6 +32,7 @@ function initMap() {
 }
 
 
+
 function loadMap() {
     fetch('/api_key')
         .then(response => response.json())
