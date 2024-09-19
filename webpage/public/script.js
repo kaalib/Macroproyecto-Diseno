@@ -30,16 +30,9 @@ function initMap() {
     fetchLatestLocation(); // Llama a la función que obtiene la ubicación
 }
 
-// Función para redondear a 3 cifras significativas
-function roundToSignificantDigits(num, n) {
-    if(num === 0) {
-        return 0;
-    }
-    const d = Math.ceil(Math.log10(Math.abs(num)));
-    const power = n - d;
-    const magnitude = Math.pow(10, power);
-    const shifted = Math.round(num * magnitude);
-    return shifted / magnitude;
+// Función para redondear a 3 decimales
+function roundToThreeDecimals(num) {
+    return Number(num.toFixed(3));
 }
 
 // Carga el mapa con la clave de la API de Google Maps
@@ -63,8 +56,8 @@ function fetchLatestLocation() {
     fetch('/data')
         .then(response => response.json())
         .then(data => {
-            const roundedLat = roundToSignificantDigits(data.latitude, 3);
-            const roundedLng = roundToSignificantDigits(data.longitude, 3);
+            const roundedLat = roundToThreeDecimals(data.latitude);
+            const roundedLng = roundToThreeDecimals(data.longitude);
 
             document.getElementById('latitude').innerText = roundedLat;
             document.getElementById('longitude').innerText = roundedLng;
