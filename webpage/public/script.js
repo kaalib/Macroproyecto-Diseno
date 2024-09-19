@@ -16,6 +16,7 @@ function initMap() {
     });
 
     directionsService = new google.maps.DirectionsService();
+    
 
     // Crea la polilínea para dibujar la ruta
     polyline = new google.maps.Polyline({
