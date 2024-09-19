@@ -3,6 +3,7 @@ let marker;
 let polyline;  
 let path = [];
 let directionsService;
+let directionsRenderer;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -16,6 +17,8 @@ function initMap() {
     });
 
     directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map)
 
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
@@ -35,7 +38,7 @@ function loadMap() {
         .then(response => response.json())
         .then(data => {
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
+            script.src = https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
