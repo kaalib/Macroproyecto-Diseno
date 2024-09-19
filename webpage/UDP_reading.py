@@ -1,9 +1,6 @@
 import socket
 import pymysql
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5055
@@ -15,6 +12,13 @@ db = pymysql.connect(
     password=os.getenv("DB_PASSWORD"),
     database=os.getenv("DB_DATABASE")
 )
+
+print("DB_HOST:", os.getenv('DB_HOST'))
+print("DB_USER:", os.getenv('DB_USER'))
+print("DB_PASSWORD:", os.getenv('DB_PASSWORD'))
+print("DB_DATABASE:", os.getenv('DB_DATABASE'))
+print("DDNS_HOST:", os.getenv('DDNS_HOST'))
+print("GOOGLE_MAPS_API_KEY:", os.getenv('GOOGLE_MAPS_API_KEY'))
 
 cursor = db.cursor()
 
