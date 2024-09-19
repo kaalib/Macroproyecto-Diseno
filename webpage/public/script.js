@@ -32,7 +32,7 @@ function initMap() {
 
 // Función para redondear a 3 decimales
 function roundToThreeDecimals(num) {
-    return Number(num.toFixed(3));
+    return Number(num.toFixed(6));
 }
 
 // Carga el mapa con la clave de la API de Google Maps
