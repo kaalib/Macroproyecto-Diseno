@@ -2,7 +2,8 @@ let map;
 let marker;
 let polyline;  
 let path = []; 
-
+let directionsService;
+let directionsRenderer;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -15,11 +16,16 @@ function initMap() {
     });
     fetchLatestLocation(); 
 
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+
     polyline = new google.maps.Polyline({
         path: path,  
-        strokeColor: '4b00821', 
+        strokeColor: '6F2F9E', 
         strokeOpacity: 1.0,  
-        strokeWeight: 2,  
+        strokeWeight: 5,  
         map: map  
     });
 
@@ -61,7 +67,7 @@ function fetchLatestLocation() {
             path.push(latLng);
             polyline.setPath(path);
 
-            setTimeout(() => {path = []; polyline.setPath(path);}, 30000); 
+            
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
