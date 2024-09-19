@@ -20,7 +20,7 @@ function initMap() {
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
         path: path,
-        strokeColor: '#6F2F9E', // Color morado
+        strokeColor: '6F2F9E', // Color morado
         strokeOpacity: 1.0,
         strokeWeight: 5,
         map: map
