@@ -1,4 +1,3 @@
-require('dotenv').config(); // Carga las variables de entorno desde el archivo .env
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
