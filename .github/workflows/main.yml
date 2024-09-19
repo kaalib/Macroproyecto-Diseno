@@ -17,5 +17,6 @@ jobs:
 
       - name: Deploy to EC2
         run: |
+          npm install
           pm2 reload DesingProject
 
