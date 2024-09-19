@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted  
+    strategy:
+      matrix:
+        runner: ["isabella","carlos","karen"]        
     steps:
       - name: Checkout code
         uses: actions/checkout@v2  
