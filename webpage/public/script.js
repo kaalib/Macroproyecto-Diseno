@@ -1,9 +1,7 @@
 let map;
 let marker;
-let polyline;  
+let polyline;
 let path = [];
-let directionsService;
-let directionsRenderer;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -15,10 +13,6 @@ function initMap() {
         position: { lat: 0, lng: 0 },
         map: map
     });
-
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
 
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
@@ -65,31 +59,17 @@ function fetchLatestLocation() {
             map.setCenter(latLng);
             marker.setPosition(latLng);
 
-            if (path.length === 0) {
-                // Si es el primer punto, simplemente agrega al array de la polilínea
-                path.push(latLng);
-                polyline.setPath(path); // Dibuja la polilínea inicial
-            } else {
-                // Calcula la ruta entre el último punto y la nueva ubicación
-                const lastPoint = path[path.length - 1]; // Último punto de la ruta
+            // Añade el nuevo punto a la ruta
+            path.push(latLng);
+            
+            // Actualiza la polilínea con la nueva ruta
+            polyline.setPath(path);
 
-                const request = {
-                    origin: lastPoint,
-                    destination: latLng,
-                    travelMode: 'DRIVING' // Calcula la ruta por las calles
-                };
-
-                directionsService.route(request, (result, status) => {
-                    if (status === 'OK') {
-                        const route = result.routes[0].overview_path;
-
-                        // Añade la ruta calculada al array de la polilínea
-                        path = path.concat(route);
-                        polyline.setPath(path); // Actualiza la polilínea en el mapa
-                    } else {
-                        console.error('Error al obtener la ruta:', status);
-                    }
-                });
+            // Si la ruta tiene más de 2 puntos, ajusta el zoom para que se vea toda la ruta
+            if (path.length > 2) {
+                const bounds = new google.maps.LatLngBounds();
+                path.forEach(point => bounds.extend(point));
+                map.fitBounds(bounds);
             }
         })
         .catch(err => console.error('Error fetching latest location:', err));
