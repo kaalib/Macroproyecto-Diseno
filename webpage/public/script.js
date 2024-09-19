@@ -1,9 +1,8 @@
 let map;
 let marker;
-let polyline;
+let polyline;  
 let path = [];
 let directionsService;
-let directionsRenderer;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -17,16 +16,6 @@ function initMap() {
     });
 
     directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer({
-        polylineOptions: {
-            strokeColor: '#6F2F9E', // Mantén el color morado
-            strokeWeight: 5,
-            strokeOpacity: 1.0
-        }
-    });
-    
-    // Asigna directionsRenderer al mapa
-    directionsRenderer.setMap(map);
 
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
@@ -90,7 +79,6 @@ function fetchLatestLocation() {
 
                 directionsService.route(request, (result, status) => {
                     if (status === 'OK') {
-                        directionsRenderer.setDirections(result); // Muestra la ruta en el mapa
                         const route = result.routes[0].overview_path;
 
                         // Añade la ruta calculada al array de la polilínea
@@ -125,4 +113,5 @@ function convertToLocalTime(utcDateString) {
 
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
+
 
