@@ -18,12 +18,12 @@ function initMap() {
 
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map)
+    directionsRenderer.setMap(map);
 
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
         path: path,
-        strokeColor: '6F2F9E', // Color morado
+        strokeColor: '#6F2F9E', // Color morado
         strokeOpacity: 1.0,
         strokeWeight: 5,
         map: map
@@ -38,7 +38,7 @@ function loadMap() {
         .then(response => response.json())
         .then(data => {
             const script = document.createElement('script');
-            script.src = https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
@@ -57,8 +57,7 @@ function fetchLatestLocation() {
             document.getElementById('longitude').innerText = data.longitude;
 
             const timestamp = convertToLocalTime(data.timestamp);
-            const date = timestamp.split(', ')[0];
-            const time = timestamp.split(', ')[1];
+            const [date, time] = timestamp.split(', ');
             document.getElementById('date').innerText = date;
             document.getElementById('time').innerText = time;
 
@@ -116,5 +115,3 @@ function convertToLocalTime(utcDateString) {
 
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
-
-
