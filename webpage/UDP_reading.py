@@ -1,9 +1,6 @@
 import socket
 import pymysql
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5055
