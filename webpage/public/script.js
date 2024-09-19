@@ -1,37 +1,36 @@
 let map;
 let marker;
-let polyline;  
-let path = []; 
+let polyline;
+let path = [];
 let directionsService;
-let directionsRenderer;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
         zoom: 14
     });
+    
     marker = new google.maps.Marker({
         position: { lat: 0, lng: 0 },
         map: map
     });
-    fetchLatestLocation(); 
 
     directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
+    
 
-
+    // Crea la polilínea para dibujar la ruta
     polyline = new google.maps.Polyline({
-        path: path,  
-        strokeColor: '#6F2F9E', 
-        strokeOpacity: 1.0,  
-        strokeWeight: 5,  
-        map: map  
+        path: path,
+        strokeColor: '#6F2F9E', // Color morado
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+        map: map
     });
 
+    fetchLatestLocation(); // Llama a la función que obtiene la ubicación
 }
 
-
+// Carga el mapa con la clave de la API de Google Maps
 function loadMap() {
     fetch('/api_key')
         .then(response => response.json())
@@ -47,6 +46,7 @@ function loadMap() {
 
 loadMap();
 
+// Función que obtiene la última ubicación del usuario
 function fetchLatestLocation() {
     fetch('/data')
         .then(response => response.json())
@@ -65,23 +65,25 @@ function fetchLatestLocation() {
             marker.setPosition(latLng);
 
             if (path.length === 0) {
-                path.push(latLng); // Si es el primer punto, solo añade el marcador
+                // Si es el primer punto, simplemente agrega al array de la polilínea
+                path.push(latLng);
+                polyline.setPath(path); // Dibuja la polilínea inicial
             } else {
-                // Calcula la ruta entre el último punto y el nuevo punto
+                // Calcula la ruta entre el último punto y la nueva ubicación
                 const lastPoint = path[path.length - 1]; // Último punto de la ruta
 
                 const request = {
                     origin: lastPoint,
                     destination: latLng,
-                    travelMode: 'DRIVING' // Asegura que siga las calles
+                    travelMode: 'DRIVING' // Calcula la ruta por las calles
                 };
 
                 directionsService.route(request, (result, status) => {
-                    if (status === google.maps.DirectionsStatus.OK) {
-                        // Añade la nueva ruta al mapa
+                    if (status === 'OK') {
+                        // Obtén la ruta desde el resultado
                         const route = result.routes[0].overview_path;
 
-                        // Actualiza el array de la polilínea
+                        // Añade la ruta calculada al array de la polilínea
                         path = path.concat(route);
                         polyline.setPath(path); // Actualiza la polilínea en el mapa
                     } else {
@@ -93,8 +95,9 @@ function fetchLatestLocation() {
         .catch(err => console.error('Error fetching latest location:', err));
 }
 
+// Función para convertir UTC a la hora local
 function convertToLocalTime(utcDateString) {
-    const localDate = new Date(utcDateString); 
+    const localDate = new Date(utcDateString);
     const options = {
         day: '2-digit',
         month: '2-digit',
@@ -103,11 +106,12 @@ function convertToLocalTime(utcDateString) {
         minute: '2-digit',
         second: '2-digit',
         hour12: false,
-        timeZone: 'UTC' // Asegúrate de que la zona horaria sea correcta
-    }; 
-    
+        timeZone: 'UTC'
+    };
+
     const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(localDate);
     return formattedDate;
 }
 
-setInterval(fetchLatestLocation, 1000);
+// Actualiza la ubicación cada 10 segundos
+setInterval(fetchLatestLocation, 10000);
