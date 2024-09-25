@@ -41,6 +41,8 @@ function fetchDataFromDatabase() {
 setInterval(fetchDataFromDatabase, 8000);
 
 
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/data', (req, res) => {
@@ -55,7 +57,39 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
+
+app.get('/historical-data', (req, res) => {
+    const { dateRange, timeRange } = req.query;
+
+    // Validar que se haya recibido un rango válido
+    if (!dateRange || !timeRange) {
+        return res.status(400).json({ error: "Invalid date or time range" });
+    }
+
+    // Procesar el rango de fechas y horas
+    const [startDate, endDate] = dateRange.split(' to ');
+    const [startTime, endTime] = timeRange.split(' to ');
+
+    // Consulta a la base de datos para obtener los datos históricos
+    const query = `
+        SELECT latitude, longitude, timestamp
+        FROM coordinates
+        WHERE timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    `;
+
+    const startTimestamp = `${startDate} ${startTime}`;
+    const endTimestamp = `${endDate} ${endTime}`;
+
+    pool.query(query, [startTimestamp, endTimestamp], (err, results) => {
+        if (err) {
+            console.error('Error fetching historical data:', err);
+            return res.status(500).json({ error: 'Error fetching historical data' });
+        }
+        res.json(results);
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://${DDNS_HOST}`);
 });
-

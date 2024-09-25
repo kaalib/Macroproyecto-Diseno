@@ -8,14 +8,14 @@
 </head>
 <body>
     <!-- Header (logo n name) -->
-    <header>  </header>
+    <header></header>
 
     <div class="container">
         <!-- left section -->
         <div class="left-section">
-                <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
-                <h1>LIEU GPS</h1>
-	    <h2>You are here</h2> 
+            <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
+            <h1>LIEU GPS</h1>
+            <h2>You are here</h2> 
             <div class="data">
                 <strong>Latitude:</strong> <span id="latitude">Loading...</span>
             </div>
@@ -28,6 +28,17 @@
             <div class="data">
                 <strong>Time:</strong> <span id="time">Loading...</span>
             </div>
+
+            <!-- Nuevos elementos para selección de rango de fechas y horas -->
+            <div class="picker-container">
+                <strong>Select Date Range:</strong> 
+                <input type="text" id="datePicker" placeholder="Select Date Range">
+            </div>
+            <div class="picker-container">
+                <strong>Select Time Range:</strong> 
+                <input type="text" id="timePicker" placeholder="Select Time Range">
+            </div>
+            <button id="fetchHistoricalData">Get Historical Data</button>
         </div>
 
         <!-- right section -->
@@ -36,6 +47,10 @@
         </div>
     </div>
 
+    <!-- Flatpickr library for date and time selection -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Script for initializing the map and handling data -->
     <script src="script.js"></script>
 </body>
 </html>
