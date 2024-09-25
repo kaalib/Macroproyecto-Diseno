@@ -4,6 +4,7 @@ let polyline;
 let path = [];
 let directionsService;
 
+// Inicializa el mapa
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
@@ -30,7 +31,7 @@ function initMap() {
     fetchLatestLocation(); // Llama a la función que obtiene la ubicación
 }
 
-// Función para redondear a 3 decimales
+// Función para redondear a 6 decimales
 function roundToThreeDecimals(num) {
     return Number(num.toFixed(6));
 }
@@ -49,6 +50,7 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
+// Llama a la función que carga el mapa
 loadMap();
 
 // Función que obtiene la última ubicación del usuario
@@ -76,6 +78,7 @@ function fetchLatestLocation() {
         .catch(err => console.error('Error fetching latest location:', err));
 }
 
+// Función para actualizar la ruta
 function updateRoute(newPoint) {
     if (path.length === 0) {
         path.push(newPoint);
@@ -128,3 +131,90 @@ function convertToLocalTime(utcDateString) {
 
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
+
+// Inicializar flatpickr para los selectores de fecha y hora
+flatpickr("#datePicker", {
+    mode: "range",
+    dateFormat: "Y-m-d",
+    onClose: function(selectedDates) {
+        if (selectedDates.length === 2) {
+            const startDate = selectedDates[0].toISOString().split('T')[0];
+            const endDate = selectedDates[1].toISOString().split('T')[0];
+            console.log(`Selected date range: ${startDate} to ${endDate}`);
+        }
+    }
+});
+
+flatpickr("#timePicker", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true,
+    onClose: function(selectedDates) {
+        if (selectedDates.length) {
+            const selectedTime = selectedDates[0].toISOString().split('T')[1].split('.')[0];
+            console.log(`Selected time: ${selectedTime}`);
+        }
+    }
+});
+
+// Función para obtener datos de geolocalización
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+function showPosition(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
+
+    document.getElementById("latitude").innerText = latitude.toFixed(6);
+    document.getElementById("longitude").innerText = longitude.toFixed(6);
+    document.getElementById("date").innerText = date;
+    document.getElementById("time").innerText = time;
+
+    // Aquí puedes agregar la lógica para actualizar el mapa con la nueva posición
+}
+
+// Manejo de errores
+function showError(error) {
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            alert("User denied the request for Geolocation.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            alert("The request to get user location timed out.");
+            break;
+        case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+            break;
+    }
+}
+
+// Evento para el botón de obtener datos históricos
+document.getElementById("fetchHistoricalData").addEventListener("click", function() {
+    const dateRange = document.getElementById("datePicker").value;
+    const timeRange = document.getElementById("timePicker").value;
+
+    if (!dateRange || !timeRange) {
+        alert("Please select both date and time ranges.");
+        return;
+    }
+
+    // Aquí debes implementar la lógica para obtener datos históricos
+    // Por ejemplo, realizar una llamada a tu servidor para obtener los datos
+
+    console.log(`Fetching historical data for: ${dateRange}, ${timeRange}`);
+    // Implementar la llamada a la API aquí
+});
+
+// Llamar a la función para obtener la ubicación al cargar la página
+window.onload = getLocation;
