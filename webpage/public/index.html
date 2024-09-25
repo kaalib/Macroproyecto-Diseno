@@ -31,19 +31,33 @@
 
             <!-- Nuevos elementos para selección de rango de fechas y horas -->
             <div class="picker-container">
-                <strong>Select Date Range:</strong> 
-                <input type="text" id="datePicker" placeholder="Select Date Range">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime">
             </div>
             <div class="picker-container">
-                <strong>Select Time Range:</strong> 
-                <input type="text" id="timePicker" placeholder="Select Time Range">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate">
+                <label for="endTime">End Time:</label>
+                <input type="time" id="endTime">
             </div>
             <button id="fetchHistoricalData">Get Historical Data</button>
         </div>
 
         <!-- right section -->
         <div class="right-section">
-            <div id="map"></div>
+            <div class="tabs">
+                <button id="currentMapTab" onclick="showTab('current')">Current Map</button>
+                <button id="historicalMapTab" onclick="showTab('historical')">Historical Map</button>
+            </div>
+            <div id="currentMap" class="map-container">
+                <div id="map"></div>
+            </div>
+            <div id="historicalMap" class="map-container" style="display:none;">
+                <h2>Historical Map</h2>
+                <div id="historicalMapContainer"></div>
+            </div>
         </div>
     </div>
 

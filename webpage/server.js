@@ -57,18 +57,31 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
-
 app.get('/historical-data', (req, res) => {
     const { dateRange, timeRange } = req.query;
 
     // Validar que se haya recibido un rango válido
-    if (!dateRange || !timeRange) {
-        return res.status(400).json({ error: "Invalid date or time range" });
+    if (!dateRange) {
+        return res.status(400).json({ error: "Debe proporcionar un rango de fechas" });
     }
 
-    // Procesar el rango de fechas y horas
-    const [startDate, endDate] = dateRange.split(' to ');
-    const [startTime, endTime] = timeRange.split(' to ');
+    let startDate, endDate, startTime = "00:00:00", endTime = "23:59:59";
+
+    // Procesar el rango de fechas
+    const dates = dateRange.split(' to ');
+    startDate = dates[0];
+    endDate = dates[1] || startDate; // Si no hay segundo día, es el mismo día
+
+    // Procesar el rango de horas (si se proporciona)
+    if (timeRange) {
+        const times = timeRange.split(' to ');
+        startTime = times[0] || "00:00:00";
+        endTime = times[1] || "23:59:59";
+    }
+
+    // Crear los timestamps para la consulta
+    const startTimestamp = `${startDate} ${startTime}`;
+    const endTimestamp = `${endDate} ${endTime}`;
 
     // Consulta a la base de datos para obtener los datos históricos
     const query = `
@@ -77,9 +90,6 @@ app.get('/historical-data', (req, res) => {
         WHERE timestamp BETWEEN ? AND ?
         ORDER BY timestamp ASC
     `;
-
-    const startTimestamp = `${startDate} ${startTime}`;
-    const endTimestamp = `${endDate} ${endTime}`;
 
     pool.query(query, [startTimestamp, endTimestamp], (err, results) => {
         if (err) {
