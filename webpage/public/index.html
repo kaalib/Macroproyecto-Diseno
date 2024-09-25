@@ -11,7 +11,7 @@
     <header></header>
 
     <div class="container">
-        <!-- left section -->
+        <!-- Sección izquierda: muestra la información general y los selectores de fecha y hora -->
         <div class="left-section">
             <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
             <h1>LIEU GPS</h1>
@@ -29,7 +29,7 @@
                 <strong>Time:</strong> <span id="time">Loading...</span>
             </div>
 
-            <!-- Nuevos elementos para selección de rango de fechas y horas -->
+            <!-- Selectores de fecha y hora para el mapa histórico -->
             <div class="picker-container">
                 <label for="startDate">Start Date:</label>
                 <input type="date" id="startDate">
@@ -45,18 +45,24 @@
             <button id="fetchHistoricalData">Get Historical Data</button>
         </div>
 
-        <!-- right section -->
+        <!-- Sección derecha: contiene las dos pestañas (Current Map y Historical Map) -->
         <div class="right-section">
+            <!-- Botones de las pestañas -->
             <div class="tabs">
-                <button id="currentMapTab" onclick="showTab('current')">Current Map</button>
-                <button id="historicalMapTab" onclick="showTab('historical')">Historical Map</button>
+                <button id="currentMapTab" class="tab-link active" onclick="showTab('currentMap')">Current Map</button>
+                <button id="historicalMapTab" class="tab-link" onclick="showTab('historicalMap')">Historical Map</button>
             </div>
-            <div id="currentMap" class="map-container">
-                <div id="map"></div>
+
+            <!-- Contenido de la pestaña "Current Map" -->
+            <div id="currentMap" class="map-container tab-content active">
+                <h2>Current Map</h2>
+                <div id="map"></div> <!-- Aquí se cargará el mapa de Google Maps en tiempo real -->
             </div>
-            <div id="historicalMap" class="map-container" style="display:none;">
+
+            <!-- Contenido de la pestaña "Historical Map" -->
+            <div id="historicalMap" class="map-container tab-content">
                 <h2>Historical Map</h2>
-                <div id="historicalMapContainer"></div>
+                <div id="historicalMapContainer"></div> <!-- Aquí se cargará el mapa histórico -->
             </div>
         </div>
     </div>
@@ -64,7 +70,7 @@
     <!-- Flatpickr library for date and time selection -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <!-- Script for initializing the map and handling data -->
+    <!-- Script para inicializar el mapa y gestionar las pestañas -->
     <script src="script.js"></script>
 </body>
 </html>

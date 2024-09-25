@@ -275,3 +275,6 @@ function updateMapWithHistoricalData(data) {
     historicalPath.forEach(point => bounds.extend(point));
     map.fitBounds(bounds);
 }
+
+// Llamar a la función para obtener la ubicación al cargar la página
+window.onload = getLocation;
