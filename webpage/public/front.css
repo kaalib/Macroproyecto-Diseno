@@ -1,11 +1,11 @@
-    html, body {
+html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Evita desplazamiento horizontal */
-    }
+}
 
-    /* header */
-    header {
+/* header */
+header {
     background-color: #6F2F9E; 
     display: flex;
     justify-content: center;
@@ -15,31 +15,31 @@
     width: 100%;
     z-index: 1000;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
+}
 
-    .container {
+.container {
     display: flex;
     justify-content: space-between;
     width: 80%;
     margin: 40px auto; /* to ensure distance between header and body */
-    }
+}
 
-    .left-section {
+.left-section {
     width: 40%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    }
+}
 
 /* Estilo para la imagen */
-    .left-section img {
+.left-section img {
     height: 150px;
     margin-bottom: 20px; /* Espacio entre imagen y texto */
-    }
+}
 
 /* Estilo para el texto LIEU con efecto 3D */
-    .left-section h1 {
+.left-section h1 {
     font-size: 100px; /* Tamaño del texto grande para igualar la imagen */
     font-weight: bold;
     color: #6F2F9E;
@@ -47,71 +47,104 @@
     text-align: center;
     text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra para simular 3D */
     font-family: 'Arial', sans-serif; /* Puedes cambiar a otra fuente si prefieres */
-    }
+}
 
-    .data {
+.data {
     margin: 10px 0;
     text-align: center;
     color: #000000;
-    }
+}
 
-    .picker-container {
-        width: 50%; /* Ocupa el 100% del ancho de la sección izquierda */
-        margin-top: 15px;
-    }
-    
-    .picker-container input[type="date"],
-    .picker-container input[type="time"] {
-        width: 48%; /* Ajusta para que ocupen la mitad del contenedor */
-        padding: 8px;
-        font-size: 16px;
-        margin-top: 5px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        margin-right: 2%; /* Espaciado entre los dos campos */
-    }
-    
-    .picker-container input[type="time"] {
-        margin-right: 0; /* Elimina el margen derecho en el segundo input */
-    }
-    
-    .picker-container label {
-        display: block; /* Asegura que cada etiqueta esté en su propia línea */
-        color: #6F2F9E; /* Color consistente con el diseño */
-        margin-top: 10px;
-        font-weight: bold;
-    }
-    
-    
-    #fetchHistoricalData {
-        margin-top: 20px;
-        padding: 10px 20px;
-        background-color: #6F2F9E;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+.picker-container {
+    width: 50%; /* Ocupa el 100% del ancho de la sección izquierda */
+    margin-top: 15px;
+}
 
+.picker-container input[type="date"],
+.picker-container input[type="time"] {
+    width: 48%; /* Ajusta para que ocupen la mitad del contenedor */
+    padding: 8px;
+    font-size: 16px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 2%; /* Espaciado entre los dos campos */
+}
+
+.picker-container input[type="time"] {
+    margin-right: 0; /* Elimina el margen derecho en el segundo input */
+}
+
+.picker-container label {
+    display: block; /* Asegura que cada etiqueta esté en su propia línea */
+    color: #6F2F9E; /* Color consistente con el diseño */
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#fetchHistoricalData {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #6F2F9E;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
 #fetchHistoricalData:hover {
     background-color: #4E1E7A; /* Color más oscuro al pasar el cursor */
 }
 
-    .right-section {
+.right-section {
     width: 55%;
-    }
+}
 
-    h2 {
+h2 {
     color: #6F2F9E;
     font-size: 40px;
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
-    }
+}
 
-    #map {
+#map {
     height: 500px;
     width: 100%;
     border-radius: 15px;
-    }
+}
+
+/* Estilos para las pestañas */
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    background-color: #f0f0f0; /* Color de fondo por defecto */
+    border: 1px solid #ccc; /* Borde por defecto */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.tab:hover {
+    background-color: #e0e0e0; /* Color al pasar el cursor */
+}
+
+.tab.active {
+    background-color: #6F2F9E; /* Color de fondo cuando está activa */
+    color: white; /* Color del texto cuando está activa */
+    border: 1px solid #6F2F9E; /* Borde activo */
+}
+
+/* Estilos adicionales opcionales */
+.tab-content {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff; /* Fondo del contenido de las pestañas */
+}
