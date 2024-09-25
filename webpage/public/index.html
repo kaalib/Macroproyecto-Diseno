@@ -7,70 +7,65 @@
     <link rel="stylesheet" href="front.css">
 </head>
 <body>
-    <!-- Header (logo n name) -->
+    <!-- Header (logo y nombre) -->
     <header></header>
 
     <div class="container">
-        <!-- Sección izquierda: muestra la información general y los selectores de fecha y hora -->
-        <div class="left-section">
-            <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
-            <h1>LIEU GPS</h1>
-            <h2>You are here</h2> 
-            <div class="data">
-                <strong>Latitude:</strong> <span id="latitude">Loading...</span>
-            </div>
-            <div class="data">
-                <strong>Longitude:</strong> <span id="longitude">Loading...</span>
-            </div>
-            <div class="data">
-                <strong>Date:</strong> <span id="date">Loading...</span>
-            </div>
-            <div class="data">
-                <strong>Time:</strong> <span id="time">Loading...</span>
-            </div>
+            <!-- Sección izquierda: muestra la información general y los selectores de fecha y hora -->
+            <div class="left-section">
+                <!-- Título e imagen encima de las filas -->
+                <div class="title-container">
+                    <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
+                    <h1>LIEU GPS</h1>
+                </div>
 
-            <!-- Selectores de fecha y hora para el mapa histórico -->
-            <div class="picker-container">
-                <label for="startDate">Start Date:</label>
-                <input type="date" id="startDate">
-                <label for="startTime">Start Time:</label>
-                <input type="time" id="startTime">
-            </div>
-            <div class="picker-container">
-                <label for="endDate">End Date:</label>
-                <input type="date" id="endDate">
-                <label for="endTime">End Time:</label>
-                <input type="time" id="endTime">
-            </div>
-            <button id="fetchHistoricalData">Get Historical Data</button>
-        </div>
+                <div class="row">
+                    <div class="info-general">
+                        <h2>You are here</h2> 
+                        <div class="data">
+                            <strong>Latitude:</strong> <span id="latitude">Loading...</span>
+                        </div>
+                        <div class="data">
+                            <strong>Longitude:</strong> <span id="longitude">Loading...</span>
+                        </div>
+                        <div class="data">
+                            <strong>Date:</strong> <span id="date">Loading...</span>
+                        </div>
+                        <div class="data">
+                            <strong>Time:</strong> <span id="time">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="selectors">
+                        <!-- Selectores de fecha y hora para el mapa histórico -->
+                        <div class="picker-container">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" id="startDate">
+                            <label for="startTime">Start Time:</label>
+                            <input type="time" id="startTime">
+                        </div>
+                        <div class="picker-container">
+                            <label for="endDate">End Date:</label>
+                            <input type="date" id="endDate">
+                            <label for="endTime">End Time:</label>
+                            <input type="time" id="endTime">
+                        </div>
+                    </div>
+                </div> <!-- Cierra row -->
+        </div> <!-- Cierra left-section -->
+
+        </div> 
 
         <!-- Sección derecha: contiene las dos pestañas (Current Map y Historical Map) -->
         <div class="right-section">
-            <!-- Botones de las pestañas -->
-            <div class="tabs">
-                <button id="currentMapTab" class="tab-link active" onclick="showTab('currentMap')">Current Map</button>
-                <button id="historicalMapTab" class="tab-link" onclick="showTab('historicalMap')">Historical Map</button>
-            </div>
-
             <!-- Contenido de la pestaña "Current Map" -->
             <div id="currentMap" class="map-container tab-content active">
                 <h2>Current Map</h2>
                 <div id="map"></div> <!-- Aquí se cargará el mapa de Google Maps en tiempo real -->
             </div>
+        </div> <!-- Cierra right-section -->
+    </div> <!-- Cierra container -->
 
-            <!-- Contenido de la pestaña "Historical Map" -->
-            <div id="historicalMap" class="map-container tab-content">
-                <h2>Historical Map</h2>
-                <div id="historicalMapContainer"></div> <!-- Aquí se cargará el mapa histórico -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Flatpickr library for date and time selection -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-    <!-- Script para inicializar el mapa y gestionar las pestañas -->
     <script src="script.js"></script>
 </body>
 </html>
