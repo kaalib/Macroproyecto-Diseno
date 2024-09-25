@@ -55,6 +55,49 @@
     color: #000000;
     }
 
+    .picker-container {
+        width: 50%; /* Ocupa el 100% del ancho de la sección izquierda */
+        margin-top: 15px;
+    }
+    
+    .picker-container input[type="date"],
+    .picker-container input[type="time"] {
+        width: 48%; /* Ajusta para que ocupen la mitad del contenedor */
+        padding: 8px;
+        font-size: 16px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 2%; /* Espaciado entre los dos campos */
+    }
+    
+    .picker-container input[type="time"] {
+        margin-right: 0; /* Elimina el margen derecho en el segundo input */
+    }
+    
+    .picker-container label {
+        display: block; /* Asegura que cada etiqueta esté en su propia línea */
+        color: #6F2F9E; /* Color consistente con el diseño */
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    
+    
+    #fetchHistoricalData {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #6F2F9E;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+
+#fetchHistoricalData:hover {
+    background-color: #4E1E7A; /* Color más oscuro al pasar el cursor */
+}
+
     .right-section {
     width: 55%;
     }

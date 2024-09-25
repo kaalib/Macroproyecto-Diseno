@@ -138,9 +138,16 @@ flatpickr("#datePicker", {
     dateFormat: "Y-m-d",
     onClose: function(selectedDates) {
         if (selectedDates.length === 2) {
-            const startDate = selectedDates[0].toISOString().split('T')[0];
-            const endDate = selectedDates[1].toISOString().split('T')[0];
-            console.log(`Selected date range: ${startDate} to ${endDate}`);
+            const startDate = selectedDates[0];
+            const endDate = selectedDates[1];
+            if (startDate > endDate) {
+                alert("El rango de fechas es incorrecto. La fecha inicial debe ser anterior a la fecha final.");
+                return;
+            }
+            console.log(`Selected date range: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
+        } else if (selectedDates.length === 1) {
+            const singleDate = selectedDates[0];
+            console.log(`Selected single date: ${singleDate.toISOString().split('T')[0]}`);
         }
     }
 });
@@ -150,10 +157,17 @@ flatpickr("#timePicker", {
     noCalendar: true,
     dateFormat: "H:i",
     time_24hr: true,
+    mode: "range",  // Permite seleccionar un rango de horas
     onClose: function(selectedDates) {
-        if (selectedDates.length) {
-            const selectedTime = selectedDates[0].toISOString().split('T')[1].split('.')[0];
-            console.log(`Selected time: ${selectedTime}`);
+        if (selectedDates.length === 2) {
+            const startTime = selectedDates[0];
+            const endTime = selectedDates[1];
+
+            if (startTime.getDate() === endTime.getDate() && startTime > endTime) {
+                alert("El rango de horas es incorrecto. La hora inicial debe ser anterior a la hora final.");
+                return;
+            }
+            console.log(`Selected time range: ${startTime.toISOString().split('T')[1].split('.')[0]} to ${endTime.toISOString().split('T')[1].split('.')[0]}`);
         }
     }
 });
@@ -204,17 +218,60 @@ document.getElementById("fetchHistoricalData").addEventListener("click", functio
     const dateRange = document.getElementById("datePicker").value;
     const timeRange = document.getElementById("timePicker").value;
 
-    if (!dateRange || !timeRange) {
-        alert("Please select both date and time ranges.");
+    if (!dateRange) {
+        alert("Por favor, selecciona un rango de fechas.");
         return;
     }
 
-    // Aquí debes implementar la lógica para obtener datos históricos
-    // Por ejemplo, realizar una llamada a tu servidor para obtener los datos
+    if (!timeRange) {
+        alert("Por favor, selecciona un rango de horas.");
+        return;
+    }
 
-    console.log(`Fetching historical data for: ${dateRange}, ${timeRange}`);
-    // Implementar la llamada a la API aquí
+    fetch(`/historical-data?dateRange=${encodeURIComponent(dateRange)}&timeRange=${encodeURIComponent(timeRange)}`)
+        .then(response => {
+            if (!response.ok) {
+                // Manejar los errores que devuelve el servidor
+                return response.json().then(error => {
+                    throw new Error(error.error);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.length === 0) {
+                alert("No se encontraron datos para el rango seleccionado.");
+                return;
+            }
+
+            // Aquí puedes actualizar tu mapa con los datos históricos
+            updateMapWithHistoricalData(data);
+        })
+        .catch(error => {
+            // Mostrar el mensaje de error al usuario
+            alert(`Error: ${error.message}`);
+        });
 });
 
-// Llamar a la función para obtener la ubicación al cargar la página
-window.onload = getLocation;
+// Función para actualizar el mapa con datos históricos
+function updateMapWithHistoricalData(data) {
+    // Limpia la polilínea anterior
+    polyline.setMap(null);
+    path = []; // Reinicia la ruta
+
+    // Dibuja la nueva polilínea con los datos históricos
+    const historicalPath = data.map(point => new google.maps.LatLng(point.latitude, point.longitude));
+    polyline = new google.maps.Polyline({
+        path: historicalPath,
+        strokeColor: '#FF0000', // Color rojo para datos históricos
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+        geodesic: true,
+        map: map
+    });
+
+    // Ajustar el zoom para ver toda la ruta histórica
+    const bounds = new google.maps.LatLngBounds();
+    historicalPath.forEach(point => bounds.extend(point));
+    map.fitBounds(bounds);
+}
