@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function fetchHistoricalData(query) {
     // Realizar solicitud al servidor
     fetch('/historical_data', {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         },
