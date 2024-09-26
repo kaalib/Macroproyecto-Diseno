@@ -57,43 +57,36 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
+// Ruta para obtener datos históricos
 app.get('/historical_data', (req, res) => {
     const { startDate, endDate, startTime, endTime } = req.query;
 
-    // Si no se proporciona la hora, asumimos que el usuario solo seleccionó fechas
-    let startDateTime, endDateTime;
+    // Construir la consulta SQL utilizando los parámetros de la solicitud
+    const sqlQuery = `
+        SELECT latitude, longitude
+        FROM coordinates
+        WHERE DATE(timestamp) BETWEEN ? AND ?
+        AND TIME(timestamp) BETWEEN ? AND ?
+        ORDER BY timestamp
+    `;
 
-    if (startTime && endTime) {
-        // Caso 2: Si el usuario selecciona tanto fechas como horas
-        startDateTime = `${startDate} ${startTime}`;
-        endDateTime = `${endDate} ${endTime}`;
-    } else {
-        // Caso 1: Solo se seleccionan fechas, se asume todo el día para ambas fechas
-        startDateTime = `${startDate} 00:00:00`;
-        endDateTime = `${endDate} 23:59:59`;
-    }
-
-    // Validación si las fechas/hours están correctamente ingresadas
-    if (new Date(startDateTime) > new Date(endDateTime)) {
-        return res.status(400).json({ error: 'El rango de fechas o de horas es incorrecto.' });
-    }
-
-    const query = `
-        SELECT latitude, longitude, timestamp 
-        FROM coordinates 
-        WHERE timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC`;
-
-    pool.query(query, [startDateTime, endDateTime], (err, results) => {
+    // Ejecutar la consulta con los parámetros
+    pool.query(sqlQuery, [startDate, endDate, startTime, endTime], (err, results) => {
         if (err) {
             console.error('Error fetching historical data:', err);
-            return res.status(500).json({ error: 'Error fetching historical data' });
+            return res.status(500).json({ error: 'Error fetching data from database' });
         }
 
-        // Enviar las ubicaciones obtenidas al cliente
-        res.json({ locations: results });
+        // Formatear los resultados para enviarlos al cliente
+        const locations = results.map(row => ({
+            latitude: row.latitude,
+            longitude: row.longitude
+        }));
+
+        res.json({ locations }); // Enviar los datos de vuelta al cliente
     });
 });
+
 
 
 
