@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('fetch-data').addEventListener('click', () => {
-        clearInterval(live);
 
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
