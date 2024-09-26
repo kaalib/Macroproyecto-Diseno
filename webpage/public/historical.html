@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIEU - Historical Data</title>
+    <link rel="stylesheet" href="front2.css"> <!-- Asegúrate de que el CSS esté vinculado -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <!-- Header (logo n name) -->
+    <header></header>
+
+    <div class="container">
+        <!-- left section -->
+        <div class="left-section">
+            <h1>Historical Data</h1>
+            <h2>Select Date and Time</h2>
+
+            <!-- Selección de rango de fechas -->
+            <label for="date-range">Choose a date range:</label>
+            <input type="text" id="date-range" placeholder="Select Date Range" />
+
+            <div>
+                <input type="checkbox" id="singleDay" name="singleDay">
+                <label for="singleDay">Select only one day</label>
+            </div>
+
+            <!-- Opcional: Selección de rango de horas -->
+            <div id="timeRangeContainer" style="display: none;">
+                <label for="time-range">Time Range:</label>
+                <input type="text" id="time-range" placeholder="HH:MM to HH:MM" />
+            </div>
+
+            <button id="submit-btn">Get Historical Data</button>
+            <div id="error" style="color: red; display: none;"></div> <!-- Para mostrar errores -->
+        </div>
+
+        <!-- right section -->
+        <div class="right-section">
+            <div id="map" style="height: 100vh;"></div> <!-- El mapa ocupará toda la altura -->
+        </div>
+    </div>
+
+    <script src="script2.js"></script> <!-- Enlaza tu script específico para esta página -->
+</body>
+</html>
