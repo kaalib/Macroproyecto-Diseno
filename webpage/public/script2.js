@@ -40,28 +40,34 @@ function loadMap() {
 }
 
 function getHistoricalData(startDate, endDate) {
-    // Construir la URL con los parámetros de consulta
     const url = `/historics?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+    console.log('Requesting historical data from:', url);
 
-    // Realizar la solicitud GET
     fetch(url)
         .then(response => {
+            console.log('Response status:', response.status);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                });
             }
             return response.json();
         })
         .then(data => {
-            console.log('Datos históricos recibidos:', data);
-            // Aquí puedes llamar a una función para procesar o mostrar los datos
-            displayHistoricalData(data);
+            console.log('Data received:', data);
+            if (Array.isArray(data) && data.length > 0) {
+                displayHistoricalData(data);
+            } else {
+                console.log('No data received or empty array');
+                alert('No se encontraron datos para el rango de fechas especificado.');
+            }
         })
         .catch(error => {
-            console.error('Error al obtener datos históricos:', error);
-            // Aquí puedes manejar el error, por ejemplo, mostrando un mensaje al usuario
-            alert('Hubo un error al obtener los datos históricos. Por favor, intente de nuevo.');
+            console.error('Error details:', error);
+            alert('Error al obtener datos históricos. Consulta la consola para más detalles.');
         });
 }
+
 function displayHistoricalData(data) {
     // Limpiar la ruta anterior
     path = [];

@@ -58,19 +58,23 @@ app.get('/api_key', (req, res) => {
 });
 
 
-//Handled GET request to the '/historics' endpoint
 app.get('/historics', (req, res) => {
     const { startDate, endDate } = req.query;
 
     // Validate that both start date and end date are provided
     if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
+        return res.status(400).json({ error: 'Please provide both startDate and endDate query parameters.' });
     }
-    // Construct SQL query to retrieve locations within the specified data range
-    const query = `SELECT * FROM locations WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'`;
-    connection.query(query, (err, results) => {
-        if (err) throw err;
-        res.json(results)
+
+    // Construct SQL query to retrieve locations within the specified date range
+    const query = 'SELECT * FROM locations WHERE Timestamp BETWEEN ? AND ?';
+    
+    connection.query(query, [startDate, endDate], (err, results) => {
+        if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).json({ error: 'An error occurred while fetching data' });
+        }
+        res.json(results);
     });
 });
 
