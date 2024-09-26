@@ -4,41 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIEU</title>
-    <link rel="stylesheet" href="front2.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+    <link rel="stylesheet" href="front.css">
 </head>
-
 <body>
-    <div id="title">
-        <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
-        <h1>Historical</h1>
-    </div>
+    <!-- Header (logo n name) -->
+    <header></header>
 
-    <div class="wrapper">
-       
-            <label for="start-date"><b>Start Date</b></label>
-            <input type="text" id="start-date" placeholder="Select a date" name="start-date">
-            <label for="end-date"><b>End Date</b></label>
-            <input type="text" id="end-date" placeholder="Select a date" name="end-date">
-            
-            <button id="fetch-data">See Data</button>
-        </div>
-        <div id="map-container">
-            <h3>Google Maps</h3>
-            <div id="map">
-                <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
-                <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
-                </gmp-map>
+    <div class="container">
+        <!-- left section -->
+        <div class="left-section">
+            <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
+            <h1>LIEU GPS</h1>
+            <h2>You are here</h2> 
+            <div class="data">
+                <strong>Latitude:</strong> <span id="latitude">Loading...</span>
             </div>
+            <div class="data">
+                <strong>Longitude:</strong> <span id="longitude">Loading...</span>
+            </div>
+            <div class="data">
+                <strong>Date:</strong> <span id="date">Loading...</span>
+            </div>
+            <div class="data">
+                <strong>Time:</strong> <span id="time">Loading...</span>
+            </div>
+            <!-- Botón para obtener datos históricos -->
+            <button id="historicalDataBtn">Get Historical Data</button>
+        </div>
+
+        <!-- right section -->
+        <div class="right-section">
+            <div id="map"></div>
         </div>
     </div>
 
     <script src="script2.js"></script>
-  
-
-
+    
 </body>
 </html>
 
