@@ -38,32 +38,46 @@ function loadMap() {
 }
 
 function getHistoricalData(startDate, endDate) {
-    const url = `/historics?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
-    console.log('Requesting historical data from:', url);
+    //Stop fetching data
+    clearInterval(live);
 
-    fetch(url)
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Data received:', data);
-            if (Array.isArray(data) && data.length > 0) {
-                displayHistoricalData(data);
-            } else {
-                console.log('No data received or empty array');
-                alert('No se encontraron datos para el rango de fechas especificado.');
-            }
-        })
-        .catch(error => {
-            console.error('Error details:', error);
-            alert('Error al obtener datos históricos. Consulta la consola para más detalles.');
-        });
+    const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
+    if (startDate && endDate && correctDates) {
+        startDate = convertToGlobalTime(startDate); //Convert date to UTC time zone
+        endDate = convertToGlobalTime(endDate); //Convert date to UTC time zone
+
+        date1 = formatDateTime(startDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+        date2 = formatDateTime(endDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+
+        // Clear the map before fetching new data
+        clearMap();
+
+        // Construct the URL with encoded date parameters for fetching historical data
+        const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
+
+        console.log("Encoded URL:", url);  
+        fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data fetched:', data); //for debugging reasons
+                console.log(data.length);
+                if (data.length == 0){
+                    alert("no routes found")
+                } else{// Process the received data 
+                    data.forEach(data => { //execute for every object in JSON
+                        updateLocationDisplay(data);
+                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+    
+                    
+                    });}
+                
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    } else {
+        alert("Ensure dates are provided and the start date is earlier than the end date.");
+    }
 }
 
 function displayHistoricalData(data) {
