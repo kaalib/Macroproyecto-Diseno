@@ -69,7 +69,7 @@ app.get('/historics', (req, res) => {
     // Construct SQL query to retrieve locations within the specified date range
     const query = 'SELECT * FROM coordinates WHERE timestamp BETWEEN ? AND ?';
     
-    connection.query(query, [startDate, endDate], (err, results) => {
+    pool.query(query, [startDate, endDate], (err, results) => {
         if (err) {
             console.error('Database query error:', err);
             return res.status(500).json({ error: 'An error occurred while fetching data' });
