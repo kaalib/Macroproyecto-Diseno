@@ -1,45 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIEU</title>
-    <link rel="stylesheet" href="front.css">
+    <title>Mapa de Datos Históricos</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Header (logo n name) -->
-    <header></header>
-
-    <div class="container">
-        <!-- left section -->
-        <div class="left-section">
-            <img class="title-image" src="/imagenes/imagenpin.png" alt="Imagen Título">
-            <h1>LIEU GPS</h1>
-            <h2>You are here</h2> 
-            <div class="data">
-                <strong>Latitude:</strong> <span id="latitude">Loading...</span>
-            </div>
-            <div class="data">
-                <strong>Longitude:</strong> <span id="longitude">Loading...</span>
-            </div>
-            <div class="data">
-                <strong>Date:</strong> <span id="date">Loading...</span>
-            </div>
-            <div class="data">
-                <strong>Time:</strong> <span id="time">Loading...</span>
-            </div>
-            <!-- Botón para obtener datos históricos -->
-            <button id="historicalDataBtn">Get Historical Data</button>
-        </div>
-
-        <!-- right section -->
-        <div class="right-section">
-            <div id="map"></div>
-        </div>
+    <h1>Mapa de Datos Históricos</h1>
+    
+    <div class="controls">
+        <label for="startDate">Fecha de inicio:</label>
+        <input type="date" id="startDate" required>
+        
+        <label for="endDate">Fecha de fin:</label>
+        <input type="date" id="endDate" required>
+        
+        <button id="obtenerHistoricos">Obtener Datos Históricos</button>
     </div>
+    
+    <div id="map"></div>
 
     <script src="script2.js"></script>
-    
 </body>
 </html>
 
