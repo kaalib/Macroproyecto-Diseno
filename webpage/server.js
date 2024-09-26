@@ -58,7 +58,7 @@ app.get('/api_key', (req, res) => {
 });
 
 app.get('/historical_data', (req, res) => {
-    const { startDate, endDate, startTime, endTime } = req.body;
+    const { startDate, endDate, startTime, endTime } = req.query;
 
     // Si no se proporciona la hora, asumimos que el usuario solo seleccionó fechas
     let startDateTime, endDateTime;
@@ -94,6 +94,7 @@ app.get('/historical_data', (req, res) => {
         res.json({ locations: results });
     });
 });
+
 
 
 
