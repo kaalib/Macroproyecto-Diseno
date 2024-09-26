@@ -37,6 +37,13 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
+
+function checkDates(dateStart, dateEnd) {
+    let start = new Date(dateStart);
+    let end = new Date(dateEnd);
+    return start < end;
+}
+
 function getHistoricalData(startDate, endDate) {
 
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
