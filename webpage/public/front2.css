@@ -1,46 +1,36 @@
-/* Estilo general para el contenedor */
-.container {
-    display: flex;
-    flex-direction: column; /* Cambia la dirección a vertical para que el mapa esté debajo de la selección */
-    align-items: center; /* Centra horizontalmente */
-    padding: 20px;
-}
-
-/* Estilo para la sección de selección de fechas */
-.date-selection {
-    margin-bottom: 20px; /* Espacio entre la sección de selección y el mapa */
-    text-align: center; /* Centra el texto */
-}
-
-/* Estilo para los inputs */
-input[type="text"] {
-    padding: 10px; /* Espaciado interno */
-    margin: 5px; /* Espaciado entre elementos */
-    border: 2px solid #6F2F9E; /* Color del borde */
-    border-radius: 5px; /* Bordes redondeados */
-    font-size: 16px; /* Tamaño de la fuente */
-    width: 250px; /* Ancho del input */
-}
-
-/* Estilo para el botón */
-#submit-btn {
-    background-color: #6F2F9E; /* Color de fondo */
-    color: white; /* Color del texto */
-    border: none; /* Sin borde */
-    padding: 10px 20px; /* Espaciado interno */
-    border-radius: 5px; /* Bordes redondeados */
-    font-size: 16px; /* Tamaño de la fuente */
-    cursor: pointer; /* Cambia el cursor al pasar el ratón */
-}
-
-/* Estilo para el botón al pasar el mouse */
-#submit-btn:hover {
-    background-color: #4C1F7D; /* Color más oscuro al pasar el mouse */
-}
-
-/* Estilo para el mapa */
 #map {
-        height: 500px;
-        width: 100%;
-        border-radius: 15px;
+    height: 500px;
+    width: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.controls {
+    margin: 20px 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input {
+    padding: 8px;
+    margin-bottom: 12px;
+    width: 100%;
+    max-width: 300px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
 }

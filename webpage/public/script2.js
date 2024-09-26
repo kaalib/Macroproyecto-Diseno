@@ -1,12 +1,11 @@
 let map;
 let marker;
-let polyline;
-let path = [];
-let directionsService;
+let polylines = [];
+let routeCoordinates = [];
+let lastTimestamp = null;
 
-// Cargar el mapa con la clave de la API de Google Maps
 function loadMap() {
-    fetch('/api_key')
+    fetch('/api-key')
         .then(response => response.json())
         .then(data => {
             const script = document.createElement('script');
@@ -18,120 +17,161 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
-// Inicializar el mapa de Google Maps
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 0, lng: 0 },
-        zoom: 14
+async function initMap() {
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+    const initialPosition = { lat: 0, lng: 0 };
+
+    map = new Map(document.getElementById("map"), {
+        zoom: 14,
+        center: initialPosition,
+        mapId: "DEMO_MAP_ID",
     });
 
-    marker = new google.maps.Marker({
-        position: { lat: 0, lng: 0 },
-        map: map
-    });
-
-    directionsService = new google.maps.DirectionsService();
-
-    // Inicializa la polilínea que seguirá la ruta personalizada
-    polyline = new google.maps.Polyline({
-        path: path,
-        strokeColor: '#6F2F9E',
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-        geodesic: true,
-        map: map
+    marker = new AdvancedMarkerElement({
+        map: map,
+        position: initialPosition,
+        title: "Current Location",
     });
 }
 
-// Función para limpiar el mapa
-function clearMap() {
-    polyline.setMap(null); // Remover la polilínea del mapa
-    path = []; // Limpiar el array de la ruta
-}
+function updateMapAndRouteHistorics(lat, lng, timestamp) {
+    const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    const newTimestamp = new Date(timestamp);
 
-// Función para procesar y mostrar los datos históricos en el mapa
-function displayHistoricalData(data) {
-    clearMap(); // Limpiar el mapa antes de añadir nuevas rutas
+    marker.position = newPosition;
+    map.panTo(newPosition);
 
-    const allPoints = data.map(item => new google.maps.LatLng(item.latitude, item.longitude));
+    if (routeCoordinates.length === 0) {
+        routeCoordinates.push(newPosition);
+        lastTimestamp = newTimestamp;
+    } else {
+        const lastPosition = routeCoordinates[routeCoordinates.length - 1];
+        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
 
-    polyline.setPath(allPoints); // Establecer la ruta de la polilínea
-
-    // Ajustar el zoom para ver toda la ruta
-    const bounds = new google.maps.LatLngBounds();
-    allPoints.forEach(point => bounds.extend(point));
-    map.fitBounds(bounds);
-}
-
-// Función para validar que la fecha de inicio es anterior a la fecha de fin
-function checkDates(startDate, endDate) {
-    return new Date(startDate) < new Date(endDate);
-}
-
-// Modificar la parte de fetchHistoricalData para llamar a displayHistoricalData
-function fetchHistoricalData(startDate, endDate, startTime, endTime) {
-    const query = `startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`;
-    
-    fetch(`/historical_data?${query}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Error en la respuesta del servidor');
-            return response.json();
-        })
-        .then(data => {
-            console.log('Data fetched:', data); // Para fines de depuración
-            if (data.length === 0) {
-                alert("No routes found");
-            } else {
-                displayHistoricalData(data);
-            }
-        })
-        .catch(err => {
-            console.error('Error fetching historical data:', err);
-            alert('Hubo un error al obtener los datos históricos.');
-        });
-}
-
-// Evento de clic para obtener datos históricos
-document.addEventListener('DOMContentLoaded', () => {
-    // Cargar los date pickers
-    flatpickr("#start-date", {
-        dateFormat: "Y-m-d H:i",
-        maxDate: new Date(),
-        mod: "multiple",
-        enableTime: true,
-        onClose: (selectedDates, dateStr) => console.log(dateStr)
-    });
-
-    flatpickr("#end-date", {
-        dateFormat: "Y-m-d H:i",
-        maxDate: new Date(),
-        mod: "multiple",
-        enableTime: true,
-        onClose: (selectedDates, dateStr) => console.log(dateStr)
-    });
-
-    document.getElementById('fetch-data').addEventListener('click', () => {
-
-        const startDate = document.getElementById('start-date').value;
-        const endDate = document.getElementById('end-date').value;
-        const startTime = document.getElementById('start-time').value;
-        const endTime = document.getElementById('end-time').value;
-
-        const correctDates = checkDates(startDate, endDate);
-        if (!startDate || !endDate || !startTime || !endTime || !correctDates) {
-            return alert("Ensure dates and times are provided and that the start date is earlier than the end date.");
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+            routeCoordinates.push(newPosition);
+            drawPolylineHistorics(lastPosition, newPosition);
+        } else if (distance > 1 || timeDiff >= 1) {
+            routeCoordinates = [newPosition];
         }
 
-        const date1 = formatDateTime(convertToGlobalTime(`${startDate} ${startTime}`));
-        const date2 = formatDateTime(convertToGlobalTime(`${endDate} ${endTime}`));
+        lastTimestamp = newTimestamp;
+    }
+}
 
-        clearMap();
-        fetchHistoricalData(date1, date2, startTime, endTime);
+function drawPolylineHistorics(origin, destination) {
+    const path = [
+        new google.maps.LatLng(origin.lat, origin.lng),
+        new google.maps.LatLng(destination.lat, destination.lng)
+    ];
+
+    const polyline = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: '#3498db',
+        strokeOpacity: 0.8,
+        strokeWeight: 3
     });
 
-    // Cargar el mapa al cargar la página
-    loadMap();
+    polyline.setMap(map);
+    polylines.push(polyline);
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c; // distance in kilometers
+}
+
+function isSameLocation(coord1, coord2) {
+    return roundCoordinate(coord1.lat) === roundCoordinate(coord2.lat) &&
+           roundCoordinate(coord1.lng) === roundCoordinate(coord2.lng);
+}
+
+function roundCoordinate(coord) {
+    return Number(coord.toFixed(4));
+}
+
+function convertToGlobalTime(localTime) {
+    const utcDate = new Date(localTime);
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'UTC'
+    };
+    return utcDate.toLocaleDateString('en-GB', options);
+}
+
+function formatDateTime(dateTime) {
+    const [date, time] = dateTime.split(', ');
+    const [day, month, year] = date.split('/');
+    return `${year}-${month}-${day} ${time}`;
+}
+
+function checkDates(dateStart, dateEnd) {
+    let start = new Date(dateStart);
+    let end = new Date(dateEnd);
+    return start < end;
+}
+
+function clearMap() {
+    polylines.forEach(polyline => polyline.setMap(null));
+    polylines = [];
+    routeCoordinates = [];
+    lastTimestamp = null;
+}
+
+document.getElementById('fetch-data').addEventListener('click', () => {
+    clearMap();
+
+    let startDate = document.getElementById('start-date').value;
+    let endDate = document.getElementById('end-date').value;
+
+    const correctDates = checkDates(startDate, endDate); // Check if start date is earlier than end date
+    if (startDate && endDate && correctDates) {
+        startDate = convertToGlobalTime(startDate);
+        endDate = convertToGlobalTime(endDate);
+
+        date1 = formatDateTime(startDate);
+        date2 = formatDateTime(endDate);
+
+        const url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    alert("No routes found");
+                } else {
+                    data.forEach(data => {
+                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    } else {
+        alert("Ensure dates are provided and the start date is earlier than the end date.");
+    }
 });
+
+loadMap();
+
 
 
 
