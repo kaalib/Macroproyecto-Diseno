@@ -58,32 +58,21 @@ app.get('/api_key', (req, res) => {
 });
 
 
-app.get('/historical_data', (req, res) => {
-    const { startDate, endDate, startTime, endTime } = req.query;
+//Handled GET request to the '/historics' endpoint
+app.get('/historics', (req, res) => {
+    const { startDate, endDate } = req.query;
 
-    // Validate that all required parameters are provided
-    if (!startDate || !endDate || !startTime || !endTime) {
-        return res.status(400).json({ error: 'Please provide startDate, endDate, startTime, and endTime query parameters.' });
+    // Validate that both start date and end date are provided
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
     }
-
-    const sqlQuery = `
-        SELECT latitude, longitude, timestamp 
-        FROM coordinates 
-        WHERE timestamp BETWEEN '${startDate} ${startTime}' AND '${endDate} ${endTime}'
-    `;
-
-    // Execute the query
-    pool.query(sqlQuery, (err, results) => {
-        if (err) {
-            console.error('Error fetching historical data:', err);
-            return res.status(500).json({ error: 'Error fetching data from database' });
-        }
-        res.json(results); // Send the results back to the client
+    // Construct SQL query to retrieve locations within the specified data range
+    const query = `SELECT * FROM locations WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'`;
+    connection.query(query, (err, results) => {
+        if (err) throw err;
+        res.json(results)
     });
 });
-
-
-
 
 
 app.listen(port, () => {

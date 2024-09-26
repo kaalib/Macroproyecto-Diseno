@@ -1,59 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIEU - Historical Data</title>
-    <link rel="stylesheet" href="front2.css"> <!-- CSS personalizado -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> <!-- CSS de Flatpickr -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <!-- JS de Flatpickr -->
+    <title>Mapa Histórico</title>
+
+
+    <!-- Cargar la librería de Flatpickr para los selectores de fecha y hora -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="front2.css">
 </head>
 <body>
-    <!-- Header (logo n name) -->
-    <header></header>
 
-    <div class="container">
-        <!-- left section -->
-        <div class="left-section">
-            <h1>Historical Data</h1>
-            <h2>Select Date and Time</h2>
+    <h1>Visualización de Rutas Históricas</h1>
 
-            <!-- Selección de rango de fechas -->
-            <label for="start-date">Start Date:</label>
-            <input type="text" id="start-date" placeholder="Select Start Date" />
+    <!-- Formulario de selección de fechas -->
+    <div class="controls">
+        <label for="start-date">Fecha de Inicio:</label>
+        <input type="text" id="start-date" placeholder="Seleccione la fecha de inicio">
 
-            <label for="end-date">End Date:</label>
-            <input type="text" id="end-date" placeholder="Select End Date" />
+        <label for="end-date">Fecha de Fin:</label>
+        <input type="text" id="end-date" placeholder="Seleccione la fecha de fin">
 
-            <label for="start-time">Start Time:</label>
-            <input type="text" id="start-time" placeholder="Select Start Time" />
-
-            <label for="end-time">End Time:</label>
-            <input type="text" id="end-time" placeholder="Select End Time" />
-
-            <div>
-                <input type="checkbox" id="singleDay" name="singleDay">
-                <label for="singleDay">Select only one day</label>
-            </div>
-
-            <!-- Opcional: Selección de rango de horas -->
-            <div id="timeRangeContainer" style="display: none;">
-                <label for="time-range">Time Range:</label>
-                <input type="text" id="time-range" placeholder="HH:MM to HH:MM" />
-            </div>
-
-            <button id="fetch-data">Get Historical Data</button>
-            <div id="error" style="color: red; display: none;"></div> <!-- Para mostrar errores -->
-        </div>
-
-        <!-- right section -->
-        <div class="right-section">
-            <div id="map" style="height: 100vh;"></div> <!-- El mapa ocupará toda la altura -->
-        </div>
+        <button id="fetch-data">Obtener Datos</button>
     </div>
 
-    <script src="script2.js"></script> <!-- Enlaza tu script específico para esta página -->
+    <!-- Contenedor del mapa -->
+    <div id="map"></div>
+
+    <!-- Cargar la librería Flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Incluir el script de Google Maps y la lógica del mapa -->
+    <script src="script2.js"></script>
 </body>
 </html>
+
 
 
