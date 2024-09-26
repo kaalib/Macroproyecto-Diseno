@@ -67,7 +67,7 @@ app.get('/historics', (req, res) => {
     }
     // Construct SQL query to retrieve locations within the specified data range
     const query = `SELECT * FROM locations WHERE timestamp BETWEEN '${startDate}' AND '${endDate}'`;
-    connection.query(query, (err, results) => {
+    pool.query(query, (err, results) => {
         if (err) throw err;
         res.json(results)
     });
