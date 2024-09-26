@@ -57,7 +57,7 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
-app.post('/historical_data', (req, res) => {
+app.get('/historical_data', (req, res) => {
     const { startDate, endDate, startTime, endTime } = req.body;
 
     // Si no se proporciona la hora, asumimos que el usuario solo seleccionó fechas
