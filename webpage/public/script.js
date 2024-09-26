@@ -41,7 +41,7 @@ function loadMap() {
         .then(response => response.json())
         .then(data => {
             const script = document.createElement('script');
-            script.src = https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap;
+            script.src = https//maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
@@ -128,3 +128,7 @@ function convertToLocalTime(utcDateString) {
 
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
+
+document.getElementById('historicalDataBtn').addEventListener('click', () => {
+    window.open('/historical.html', '_blank'); // Abre en una nueva pestaña
+});

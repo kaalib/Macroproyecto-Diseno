@@ -57,48 +57,45 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
-app.get('/historical-data', (req, res) => {
-    const { dateRange, timeRange } = req.query;
+app.post('/historical_data', (req, res) => {
+    const { startDate, endDate, startTime, endTime } = req.body;
 
-    // Validar que se haya recibido un rango válido
-    if (!dateRange) {
-        return res.status(400).json({ error: "Debe proporcionar un rango de fechas" });
+    // Si no se proporciona la hora, asumimos que el usuario solo seleccionó fechas
+    let startDateTime, endDateTime;
+
+    if (startTime && endTime) {
+        // Caso 2: Si el usuario selecciona tanto fechas como horas
+        startDateTime = `${startDate} ${startTime}`;
+        endDateTime = `${endDate} ${endTime}`;
+    } else {
+        // Caso 1: Solo se seleccionan fechas, se asume todo el día para ambas fechas
+        startDateTime = `${startDate} 00:00:00`;
+        endDateTime = `${endDate} 23:59:59`;
     }
 
-    let startDate, endDate, startTime = "00:00:00", endTime = "23:59:59";
-
-    // Procesar el rango de fechas
-    const dates = dateRange.split(' to ');
-    startDate = dates[0];
-    endDate = dates[1] || startDate; // Si no hay segundo día, es el mismo día
-
-    // Procesar el rango de horas (si se proporciona)
-    if (timeRange) {
-        const times = timeRange.split(' to ');
-        startTime = times[0] || "00:00:00";
-        endTime = times[1] || "23:59:59";
+    // Validación si las fechas/hours están correctamente ingresadas
+    if (new Date(startDateTime) > new Date(endDateTime)) {
+        return res.status(400).json({ error: 'El rango de fechas o de horas es incorrecto.' });
     }
 
-    // Crear los timestamps para la consulta
-    const startTimestamp = `${startDate} ${startTime}`;
-    const endTimestamp = `${endDate} ${endTime}`;
-
-    // Consulta a la base de datos para obtener los datos históricos
     const query = `
-        SELECT latitude, longitude, timestamp
-        FROM coordinates
+        SELECT latitude, longitude, timestamp 
+        FROM coordinates 
         WHERE timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC
-    `;
+        ORDER BY timestamp ASC`;
 
-    pool.query(query, [startTimestamp, endTimestamp], (err, results) => {
+    pool.query(query, [startDateTime, endDateTime], (err, results) => {
         if (err) {
             console.error('Error fetching historical data:', err);
             return res.status(500).json({ error: 'Error fetching historical data' });
         }
-        res.json(results);
+
+        // Enviar las ubicaciones obtenidas al cliente
+        res.json({ locations: results });
     });
 });
+
+
 
 app.listen(port, () => {
     console.log(`Server running on http://${DDNS_HOST}`);
