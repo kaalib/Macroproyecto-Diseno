@@ -1,11 +1,9 @@
 let map;
-let marker;
 let polyline;
 let path = [];
 let directionsService;
 
 app.use(express.json()); // Para poder parsear JSON
-
 
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,13 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
         mode: "range" // Permite seleccionar un rango de horas
     });
 
-    
-
     // Manejador para el evento de envío
     document.getElementById('submit-btn').addEventListener('click', () => {
         const dateRange = document.getElementById('date-range').value;
         const timeRange = document.getElementById('time-range').value;
 
+        // Validar el rango de fechas
         if (!dateRange) {
             alert('Debes seleccionar un rango de fechas.');
             return;
@@ -41,12 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const startDate = dates[0];
         const endDate = dates[1] || startDate; // Si no hay fecha final, se toma solo el primer día
 
-        let startTime, endTime;
+        let startTime = '00:00', endTime = '23:59'; // Asignación de valores por defecto
 
+        // Validar el rango de horas
         if (timeRange) {
             const times = timeRange.split(" to ");
             startTime = times[0];
-            endTime = times[1] || '23:59';
+            endTime = times[1] || endTime; // Usa '23:59' como valor por defecto
 
             if (startDate === endDate && startTime >= endTime) {
                 alert('El rango de horas es incorrecto. La hora de inicio debe ser menor que la hora de fin.');
@@ -55,18 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Crear objeto de datos a enviar
-    const query = {
-        startDate,
-        endDate,
-        startTime,
-        endTime
-    };
+        const query = {
+            startDate,
+            endDate,
+            startTime,
+            endTime
+        };
 
-    // Log de los datos enviados al servidor
-    console.log('Datos enviados al servidor:', query);
+        // Log de los datos enviados al servidor
+        console.log('Datos enviados al servidor:', query);
 
         // Enviar la solicitud al servidor
-        fetchHistoricalData(startDate, endDate, startTime, endTime);
+        fetchHistoricalData(query);
     });
 
     // Manejador para el checkbox que muestra/oculta el selector de tiempo
@@ -75,8 +73,29 @@ document.addEventListener('DOMContentLoaded', () => {
         timeRangeContainer.style.display = this.checked ? 'none' : 'block'; // Muestra/oculta el contenedor de tiempo
     });
 
+    // Cargar el mapa
+    loadMap();
 });
 
+// Función para hacer la solicitud de datos históricos al servidor
+function fetchHistoricalData(query) {
+    // Realizar solicitud al servidor
+    fetch('/historical_data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(query)
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayHistoricalDataOnMap(data.locations); // Mostrar los datos en el mapa
+    })
+    .catch(err => {
+        console.error('Error fetching historical data:', err);
+        alert('Hubo un error al obtener los datos históricos.');
+    });
+}
 
 // Inicializar el mapa de Google Maps
 function initMap() {
@@ -111,33 +130,6 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
-// Función para hacer la solicitud de datos históricos al servidor
-function fetchHistoricalData(startDate, endDate, startTime = '00:00', endTime = '23:59') {
-    const query = {
-        startDate,
-        endDate,
-        startTime,
-        endTime
-    };
-
-    // Realizar solicitud al servidor
-    fetch('/historical_data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(query)
-    })
-    .then(response => response.json())
-    .then(data => {
-        displayHistoricalDataOnMap(data.locations); // Mostrar los datos en el mapa
-    })
-    .catch(err => {
-        console.error('Error fetching historical data:', err);
-        alert('Hubo un error al obtener los datos históricos.');
-    });
-}
-
 // Función para mostrar los datos históricos en el mapa
 function displayHistoricalDataOnMap(locations) {
     path = []; // Reiniciar la ruta
@@ -159,5 +151,6 @@ function displayHistoricalDataOnMap(locations) {
     }
 }
 
-loadMap(); // Cargar el mapa al cargar la página
+// Cargar el mapa al cargar la página
+loadMap();
 
