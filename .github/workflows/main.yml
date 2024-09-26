@@ -19,5 +19,5 @@ jobs:
         run: |
           cd webpage
           npm install
-          sudo pm2 reload DesingProject
+         pm2 reload DesingProject
 
