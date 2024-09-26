@@ -233,7 +233,7 @@ document.getElementById('obtenerHistoricos').addEventListener('click', () => {
         clearMap();
 
         // Construct the URL with encoded date parameters for fetching historical data
-        const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
+        const url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
 
         console.log("Encoded URL:", url);  
         fetch(url) 
