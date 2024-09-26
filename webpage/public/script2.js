@@ -38,8 +38,6 @@ function loadMap() {
 }
 
 function getHistoricalData(startDate, endDate) {
-    //Stop fetching data
-    clearInterval(live);
 
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
     if (startDate && endDate && correctDates) {
@@ -48,9 +46,6 @@ function getHistoricalData(startDate, endDate) {
 
         date1 = formatDateTime(startDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
         date2 = formatDateTime(endDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
-
-        // Clear the map before fetching new data
-        clearMap();
 
         // Construct the URL with encoded date parameters for fetching historical data
         const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
@@ -65,8 +60,7 @@ function getHistoricalData(startDate, endDate) {
                     alert("no routes found")
                 } else{// Process the received data 
                     data.forEach(data => { //execute for every object in JSON
-                        updateLocationDisplay(data);
-                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                        displayHistoricalData(data);
     
                     
                     });}
