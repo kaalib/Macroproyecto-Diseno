@@ -6,14 +6,14 @@ let directionsService;
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
     // Configurar Flatpickr para el rango de fechas
-    flatpickr("#date-range", {
+    configureFlatpickr("#date-range", {
         mode: "range",
         dateFormat: "Y-m-d", // Formato de la fecha
         allowInput: true // Permitir que el usuario escriba la fecha manualmente si quiere
     });
 
     // Configurar Flatpickr para el rango de horas (opcional)
-    flatpickr("#time-range", {
+    configureFlatpickr("#time-range", {
         enableTime: true,
         noCalendar: true, // Solo para horas
         dateFormat: "H:i", // Formato de hora 24h
@@ -22,77 +22,82 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Manejador para el evento de envío
-    document.getElementById('submit-btn').addEventListener('click', () => {
-        const dateRange = document.getElementById('date-range').value;
-        const timeRange = document.getElementById('time-range').value;
-
-        // Validar el rango de fechas
-        if (!dateRange) {
-            alert('Debes seleccionar un rango de fechas.');
-            return;
-        }
-
-        const dates = dateRange.split(" to ");
-        const startDate = dates[0];
-        const endDate = dates[1] || startDate; // Si no hay fecha final, se toma solo el primer día
-
-        let startTime = '00:00', endTime = '23:59'; // Asignación de valores por defecto
-
-        // Validar el rango de horas
-        if (timeRange) {
-            const times = timeRange.split(" to ");
-            startTime = times[0];
-            endTime = times[1] || endTime; // Usa '23:59' como valor por defecto
-
-            if (startDate === endDate && startTime >= endTime) {
-                alert('El rango de horas es incorrecto. La hora de inicio debe ser menor que la hora de fin.');
-                return;
-            }
-        }
-
-        // Crear objeto de datos a enviar
-        const query = {
-            startDate,
-            endDate,
-            startTime,
-            endTime
-        };
-
-        // Log de los datos enviados al servidor
-        console.log('Datos enviados al servidor:', query);
-
-        // Enviar la solicitud al servidor
-        fetchHistoricalData(query);
-    });
+    document.getElementById('submit-btn').addEventListener('click', handleSubmit);
 
     // Manejador para el checkbox que muestra/oculta el selector de tiempo
-    document.getElementById('singleDay').addEventListener('change', function() {
-        const timeRangeContainer = document.getElementById('timeRangeContainer');
-        timeRangeContainer.style.display = this.checked ? 'none' : 'block'; // Muestra/oculta el contenedor de tiempo
-    });
+    document.getElementById('singleDay').addEventListener('change', toggleTimeRange);
 
     // Cargar el mapa
     loadMap();
 });
 
+// Configurar Flatpickr
+function configureFlatpickr(selector, options) {
+    flatpickr(selector, options);
+}
+
+// Manejar el envío de datos
+function handleSubmit() {
+    const dateRange = document.getElementById('date-range').value;
+    const timeRange = document.getElementById('time-range').value;
+
+    // Validar el rango de fechas
+    if (!dateRange) {
+        alert('Debes seleccionar un rango de fechas.');
+        return;
+    }
+
+    const [startDate, endDate] = dateRange.split(" to ");
+    let startTime = '00:00', endTime = '23:59'; // Asignación de valores por defecto
+
+    // Validar el rango de horas
+    if (timeRange) {
+        const [start, end] = timeRange.split(" to ");
+        startTime = start;
+        endTime = end || endTime; // Usa '23:59' como valor por defecto
+
+        if (startDate === endDate && startTime >= endTime) {
+            alert('El rango de horas es incorrecto. La hora de inicio debe ser menor que la hora de fin.');
+            return;
+        }
+    }
+
+    // Crear objeto de datos a enviar en la URL
+    const query = new URLSearchParams({
+        startDate,
+        endDate,
+        startTime,
+        endTime
+    }).toString();
+
+    // Log de los datos enviados al servidor
+    console.log('Datos enviados al servidor:', query);
+
+    // Enviar la solicitud al servidor
+    fetchHistoricalData(query);
+}
+
+// Toggle para mostrar/ocultar el selector de tiempo
+function toggleTimeRange() {
+    const timeRangeContainer = document.getElementById('timeRangeContainer');
+    timeRangeContainer.style.display = this.checked ? 'none' : 'block'; // Muestra/oculta el contenedor de tiempo
+}
+
 // Función para hacer la solicitud de datos históricos al servidor
 function fetchHistoricalData(query) {
-    // Realizar solicitud al servidor
-    fetch('/historical_data', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(query)
-    })
-    .then(response => response.json())
-    .then(data => {
-        displayHistoricalDataOnMap(data.locations); // Mostrar los datos en el mapa
-    })
-    .catch(err => {
-        console.error('Error fetching historical data:', err);
-        alert('Hubo un error al obtener los datos históricos.');
-    });
+    // Realizar solicitud al servidor usando GET
+    fetch(`/historical_data?${query}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+        })
+        .then(data => {
+            displayHistoricalDataOnMap(data.locations); // Mostrar los datos en el mapa
+        })
+        .catch(err => {
+            console.error('Error fetching historical data:', err);
+            alert('Hubo un error al obtener los datos históricos.');
+        });
 }
 
 // Inicializar el mapa de Google Maps
@@ -151,4 +156,5 @@ function displayHistoricalDataOnMap(locations) {
 
 // Cargar el mapa al cargar la página
 loadMap();
+
 
