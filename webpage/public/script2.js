@@ -39,20 +39,6 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
-
-function loadMap() {
-    fetch('/api-key')
-        .then(response => response.json())
-        .then(data => {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        })
-        .catch(err => console.error('Error fetching API key:', err));
-}
-
 flatpickr("#start-date", {
     dateFormat: "Y-m-d H:i",
     maxDate: new Date(),
@@ -272,3 +258,4 @@ document.getElementById('obtenerHistoricos').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', loadMap);
+initMap();
