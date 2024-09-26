@@ -4,97 +4,43 @@ let polyline;
 let path = [];
 let directionsService;
 
-// Esperar a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', () => {
-    // Configurar Flatpickr para el rango de fechas
-    flatpickr("#date-range", {
-        mode: "range",
-        dateFormat: "Y-m-d", // Formato de la fecha
-        allowInput: true // Permitir que el usuario escriba la fecha manualmente si quiere
-    });
+// Cargar el mapa con la clave de la API de Google Maps
+function loadMap() {
+    fetch('/api_key')
+        .then(response => response.json())
+        .then(data => {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        })
+        .catch(err => console.error('Error fetching API key:', err));
+}
 
-    // Configurar Flatpickr para el rango de horas (opcional)
-    flatpickr("#time-range", {
-        enableTime: true,
-        noCalendar: true, // Solo para horas
-        dateFormat: "H:i", // Formato de hora 24h
-        time_24hr: true,
-        mode: "range" // Permite seleccionar un rango de horas
-    });
-
-    // Manejador para el evento de envío
-    document.getElementById('submit-btn').addEventListener('click', handleSubmit);
-
-    // Manejador para el checkbox que muestra/oculta el selector de tiempo
-    document.getElementById('singleDay').addEventListener('change', toggleTimeRange);
-
-    // Cargar el mapa
-    loadMap();
+//load date picker for start date
+flatpickr("#start-date", {
+    dateFormat: "Y-m-d H:i",
+    maxDate: new Date(),
+    mod: "multiple",
+    enableTime: true,
+    onClose: function(selectedDates, dateStr, instance) {
+        date1 = dateStr; // Save the selected date to the variable
+        console.log(date1)
+    }
 });
 
-// Manejar el envío de datos
-function handleSubmit() {
-    const dateRange = document.getElementById('date-range').value;
-    const timeRange = document.getElementById('time-range').value;
-
-    // Validar el rango de fechas
-    if (!dateRange) {
-        alert('Debes seleccionar un rango de fechas.');
-        return;
-    }
-
-    const [startDate, endDate] = dateRange.split(" to ");
-    let startTime = '00:00', endTime = '23:59'; // Asignación de valores por defecto
-
-    // Validar el rango de horas
-    if (timeRange) {
-        const [start, end] = timeRange.split(" to ");
-        startTime = start;
-        endTime = end || endTime; // Usa '23:59' como valor por defecto
-
-        if (startDate === endDate && startTime >= endTime) {
-            alert('El rango de horas es incorrecto. La hora de inicio debe ser menor que la hora de fin.');
-            return;
-        }
-    }
-
-    // Crear objeto de datos a enviar en la URL
-    const query = new URLSearchParams({
-        startDate,
-        endDate,
-        startTime,
-        endTime
-    }).toString();
-
-    // Log de los datos enviados al servidor
-    console.log('Datos enviados al servidor:', query);
-
-    // Enviar la solicitud al servidor
-    fetchHistoricalData(query);
-}
-
-// Toggle para mostrar/ocultar el selector de tiempo
-function toggleTimeRange() {
-    const timeRangeContainer = document.getElementById('timeRangeContainer');
-    timeRangeContainer.style.display = this.checked ? 'none' : 'block'; // Muestra/oculta el contenedor de tiempo
-}
-
-// Función para hacer la solicitud de datos históricos al servidor
-function fetchHistoricalData(query) {
-    // Realizar solicitud al servidor usando GET
-    fetch(`/historical_data?${query}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Error en la respuesta del servidor');
-            return response.json();
-        })
-        .then(data => {
-            displayHistoricalDataOnMap(data.locations); // Mostrar los datos en el mapa
-        })
-        .catch(err => {
-            console.error('Error fetching historical data:', err);
-            alert('Hubo un error al obtener los datos históricos.');
-        });
-}
+//load date picker for end date
+flatpickr("#end-date", {
+    dateFormat: "Y-m-d H:i",
+    maxDate: new Date(),
+    mod: "multiple",
+    enableTime: true,
+    onClose: function(selectedDates, dateStr, instance) {
+        date2 = dateStr; // Save the selected date to the variable
+        console.log(date2)
+    }
+});
 
 // Inicializar el mapa de Google Maps
 function initMap() {
@@ -121,40 +67,105 @@ function initMap() {
     });
 }
 
-// Cargar el mapa con la clave de la API de Google Maps
-function loadMap() {
-    fetch('/api_key')
-        .then(response => response.json())
-        .then(data => {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        })
-        .catch(err => console.error('Error fetching API key:', err));
-}
+// Función para procesar y mostrar los datos históricos en el mapa
+function displayHistoricalData(data) {
+    clearMap(); // Limpiar el mapa antes de añadir nuevas rutas
 
-// Función para mostrar los datos históricos en el mapa
-function displayHistoricalDataOnMap(locations) {
-    path = []; // Reiniciar la ruta
+    // Crear un array para almacenar todos los puntos
+    const allPoints = [];
 
-    // Recorrer las ubicaciones y agregarlas al mapa
-    locations.forEach(loc => {
-        const latLng = new google.maps.LatLng(loc.latitude, loc.longitude);
-        path.push(latLng);
+    // Extraer latitud y longitud de los datos
+    data.forEach(item => {
+        const newPoint = new google.maps.LatLng(item.latitude, item.longitude);
+        allPoints.push(newPoint); // Agregar cada punto al array
     });
 
-    if (path.length > 0) {
-        polyline.setPath(path);
-        map.setCenter(path[0]); // Centrar el mapa en la primera ubicación
+    // Dibujar la polilínea con todos los puntos
+    polyline.setPath(allPoints); // Establecer la ruta de la polilínea
 
-        // Ajustar el zoom para ver toda la ruta
-        const bounds = new google.maps.LatLngBounds();
-        path.forEach(point => bounds.extend(point));
-        map.fitBounds(bounds);
-    }
+    // Ajustar el zoom para ver toda la ruta
+    const bounds = new google.maps.LatLngBounds();
+    allPoints.forEach(point => bounds.extend(point));
+    map.fitBounds(bounds);
 }
+
+
+function clearMap() {
+    polyline.setMap(null); // Remover la polilínea del mapa
+    path = []; // Limpiar el array de la ruta
+
+}
+
+
+
+// Función para validar que la fecha de inicio es anterior a la fecha de fin
+function checkDates(startDate, endDate) {
+    return new Date(startDate) < new Date(endDate);
+}
+
+
+
+// Modificar la parte de fetchHistoricalData para llamar a displayHistoricalData
+function fetchHistoricalData(startDate, endDate, startTime, endTime) {
+    // Construir la cadena de consulta
+    const query = `startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&startTime=${encodeURIComponent(startTime)}&endTime=${encodeURIComponent(endTime)}`;
+    
+    // Realizar solicitud al servidor usando GET
+    fetch(`/historical_data?${query}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data fetched:', data); // Para fines de depuración
+            if (data.length === 0) {
+                alert("No routes found");
+            } else {
+                // Mostrar los datos históricos en el mapa
+                displayHistoricalData(data);
+            }
+        })
+        .catch(err => {
+            console.error('Error fetching historical data:', err);
+            alert('Hubo un error al obtener los datos históricos.');
+        });
+}
+
+
+// Evento de clic para obtener datos históricos
+document.getElementById('fetch-data').addEventListener('click', () => {
+    // Detener la obtención de datos en tiempo real
+    clearInterval(live);
+
+    let startDate = document.getElementById('start-date').value;
+    let endDate = document.getElementById('end-date').value;
+    let startTime = document.getElementById('start-time').value; // Asumiendo que también tienes un campo para la hora de inicio
+    let endTime = document.getElementById('end-time').value; // Asumiendo que también tienes un campo para la hora de fin
+
+    // Verificar que se proporcionen todas las fechas y horas requeridas
+    const correctDates = checkDates(startDate, endDate);
+    if (!startDate || !endDate || !startTime || !endTime || !correctDates) {
+        return alert("Ensure dates and times are provided and that the start date is earlier than the end date.");
+    }
+
+    // Convertir la fecha y la hora a la zona horaria UTC
+    startDate = convertToGlobalTime(`${startDate} ${startTime}`);
+    endDate = convertToGlobalTime(`${endDate} ${endTime}`);
+
+    // Convertir las fechas al formato deseado YYYY/MM/DD HH:MM:SS
+    const date1 = formatDateTime(startDate);
+    const date2 = formatDateTime(endDate);
+
+    // Limpiar el mapa antes de obtener nuevos datos
+    clearMap();
+
+    // Llamar a la función para obtener los datos históricos
+    fetchHistoricalData(date1, date2, startTime, endTime);
+});
+
+
+
+
 
 // Cargar el mapa al cargar la página
 loadMap();

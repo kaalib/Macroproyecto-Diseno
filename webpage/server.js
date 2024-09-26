@@ -57,33 +57,28 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
-// Ruta para obtener datos históricos
+
 app.get('/historical_data', (req, res) => {
     const { startDate, endDate, startTime, endTime } = req.query;
 
-    // Construir la consulta SQL utilizando los parámetros de la solicitud
+    // Validate that all required parameters are provided
+    if (!startDate || !endDate || !startTime || !endTime) {
+        return res.status(400).json({ error: 'Please provide startDate, endDate, startTime, and endTime query parameters.' });
+    }
+
     const sqlQuery = `
-        SELECT latitude, longitude
-        FROM coordinates
-        WHERE DATE(timestamp) BETWEEN ? AND ?
-        AND TIME(timestamp) BETWEEN ? AND ?
-        ORDER BY timestamp
+        SELECT latitude, longitude, timestamp 
+        FROM coordinates 
+        WHERE timestamp BETWEEN '${startDate} ${startTime}' AND '${endDate} ${endTime}'
     `;
 
-    // Ejecutar la consulta con los parámetros
-    pool.query(sqlQuery, [startDate, endDate, startTime, endTime], (err, results) => {
+    // Execute the query
+    pool.query(sqlQuery, (err, results) => {
         if (err) {
             console.error('Error fetching historical data:', err);
             return res.status(500).json({ error: 'Error fetching data from database' });
         }
-
-        // Formatear los resultados para enviarlos al cliente
-        const locations = results.map(row => ({
-            latitude: row.latitude,
-            longitude: row.longitude
-        }));
-
-        res.json({ locations }); // Enviar los datos de vuelta al cliente
+        res.json(results); // Send the results back to the client
     });
 });
 
