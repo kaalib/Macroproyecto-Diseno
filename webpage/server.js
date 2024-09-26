@@ -66,7 +66,7 @@ app.get('/historics', (req, res) => {
         return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
     }
     // Construct SQL query to retrieve locations within the specified data range
-    const query = `SELECT * FROM locations WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'`;
+    const query = `SELECT * FROM locations WHERE timestamp BETWEEN '${startDate}' AND '${endDate}'`;
     connection.query(query, (err, results) => {
         if (err) throw err;
         res.json(results)
