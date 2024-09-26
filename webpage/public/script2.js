@@ -4,54 +4,33 @@ let polyline;
 let path = [];
 let directionsService;
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 0, lng: 0 },
-        zoom: 14
+// Esperar a que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', () => {
+    // Configurar Flatpickr para el rango de fechas
+    flatpickr("#date-range", {
+        mode: "range",
+        dateFormat: "Y-m-d", // Formato de la fecha
+        allowInput: true // Permitir que el usuario escriba la fecha manualmente si quiere
     });
 
-    marker = new google.maps.Marker({
-        position: { lat: 0, lng: 0 },
-        map: map
+    // Configurar Flatpickr para el rango de horas (opcional)
+    flatpickr("#time-range", {
+        enableTime: true,
+        noCalendar: true, // Solo para horas
+        dateFormat: "H:i", // Formato de hora 24h
+        time_24hr: true,
+        mode: "range" // Permite seleccionar un rango de horas
     });
 
-    directionsService = new google.maps.DirectionsService();
+    // Manejador para el evento de envío
+    document.getElementById('submit-btn').addEventListener('click', handleSubmit);
 
-    // Inicializa la polilínea que seguirá la ruta personalizada
-    polyline = new google.maps.Polyline({
-        path: path,
-        strokeColor: '#6F2F9E', // Color morado
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-        geodesic: true,
-        map: map
-    });
+    // Manejador para el checkbox que muestra/oculta el selector de tiempo
+    document.getElementById('singleDay').addEventListener('change', toggleTimeRange);
 
-    // Cargar los datos históricos al iniciar el mapa
-    loadHistoricalData();
-}
-
-// Configurar Flatpickr para el rango de fechas
-configureFlatpickr("#date-range", {
-    mode: "range",
-    dateFormat: "Y-m-d", // Formato de la fecha
-    allowInput: true // Permitir que el usuario escriba la fecha manualmente si quiere
+    // Cargar el mapa
+    loadMap();
 });
-
-// Configurar Flatpickr para el rango de horas
-configureFlatpickr("#time-range", {
-    enableTime: true,
-    noCalendar: true, // Solo para horas
-    dateFormat: "H:i", // Formato de hora 24h
-    time_24hr: true,
-    mode: "range" // Permite seleccionar un rango de horas
-});
-
-// Manejador para el evento de envío
-document.getElementById('submit-btn').addEventListener('click', handleSubmit);
-
-// Manejador para el checkbox que muestra/oculta el selector de tiempo
-document.getElementById('singleDay').addEventListener('change', toggleTimeRange);
 
 // Manejar el envío de datos
 function handleSubmit() {
@@ -118,6 +97,31 @@ function fetchHistoricalData(query) {
 }
 
 // Inicializar el mapa de Google Maps
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 0, lng: 0 },
+        zoom: 14
+    });
+
+    marker = new google.maps.Marker({
+        position: { lat: 0, lng: 0 },
+        map: map
+    });
+
+    directionsService = new google.maps.DirectionsService();
+
+    // Inicializa la polilínea que seguirá la ruta personalizada
+    polyline = new google.maps.Polyline({
+        path: path,
+        strokeColor: '#6F2F9E',
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+        geodesic: true,
+        map: map
+    });
+}
+
+// Cargar el mapa con la clave de la API de Google Maps
 function loadMap() {
     fetch('/api_key')
         .then(response => response.json())
@@ -142,24 +146,19 @@ function displayHistoricalDataOnMap(locations) {
     });
 
     if (path.length > 0) {
-        // Establecer la polilínea con la nueva ruta
         polyline.setPath(path);
+        map.setCenter(path[0]); // Centrar el mapa en la primera ubicación
 
         // Ajustar el zoom para ver toda la ruta
         const bounds = new google.maps.LatLngBounds();
         path.forEach(point => bounds.extend(point));
         map.fitBounds(bounds);
-
-        // Centrar el mapa en la primera ubicación
-        map.setCenter(path[0]);
-
-        // Opcional: agregar marcador en la primera ubicación
-        marker.setPosition(path[0]);
     }
 }
 
 // Cargar el mapa al cargar la página
 loadMap();
+
 
 
 
