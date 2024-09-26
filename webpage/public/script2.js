@@ -16,16 +16,14 @@ function initMap() {
 
     polyline = new google.maps.Polyline({
         path: path,
-        strokeColor: '#6F2F9E', // Color morado
+        strokeColor: '#6F2F9E',
         strokeOpacity: 1.0,
         strokeWeight: 5,
         geodesic: true,
         map: map
     });
-
 }
 
-// Carga el mapa con la clave de la API de Google Maps
 function loadMap() {
     fetch('/api_key')
         .then(response => response.json())
@@ -69,28 +67,37 @@ function getHistoricalData(startDate, endDate) {
 }
 
 function displayHistoricalData(data) {
-    // Limpiar la ruta anterior
     path = [];
 
-    // Procesar los datos y añadirlos a la ruta
     data.forEach(location => {
-        const lat = parseFloat(location.Latitude);
-        const lng = parseFloat(location.Longitude);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            path.push({ lat, lng });
+        const lat = parseFloat(location.latitude);
+        const lng = parseFloat(location.longitude);
+        const timestamp = new Date(location.timestamp);
+        
+        if (!isNaN(lat) && !isNaN(lng) && !isNaN(timestamp.getTime())) {
+            path.push({ 
+                lat, 
+                lng, 
+                timestamp: timestamp.toLocaleString() // Convert to local time string
+            });
+        } else {
+            console.warn('Invalid data point:', location);
         }
     });
 
-    // Actualizar la polilínea con la nueva ruta
     polyline.setPath(path);
 
-    // Centrar el mapa en el primer punto de la ruta
     if (path.length > 0) {
         map.setCenter(path[0]);
         marker.setPosition(path[0]);
+        
+        // Add info window to the marker
+        const infoWindow = new google.maps.InfoWindow({
+            content: `Última posición: ${path[0].timestamp}`
+        });
+        infoWindow.open(map, marker);
     }
 
-    // Ajustar el zoom para que se vea toda la ruta
     if (path.length > 1) {
         const bounds = new google.maps.LatLngBounds();
         path.forEach(point => bounds.extend(point));
@@ -100,14 +107,12 @@ function displayHistoricalData(data) {
     console.log('Ruta actualizada en el mapa');
 }   
 
-// Ejemplo de cómo usar la función
 document.getElementById('obtenerHistoricos').addEventListener('click', () => {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     getHistoricalData(startDate, endDate);
 });
 
-// Cargar el mapa cuando la página se cargue
 document.addEventListener('DOMContentLoaded', loadMap);
 
 
