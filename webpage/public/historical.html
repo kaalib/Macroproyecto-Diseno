@@ -1,40 +1,45 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Histórico</title>
-
-
-    <!-- Cargar la librería de Flatpickr para los selectores de fecha y hora -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <title>LIEU</title>
     <link rel="stylesheet" href="front2.css">
-</head>
-<body>
-
-    <h1>Visualización de Rutas Históricas</h1>
-
-    <!-- Formulario de selección de fechas -->
-    <div class="controls">
-        <label for="start-date">Fecha de Inicio:</label>
-        <input type="text" id="start-date" placeholder="Seleccione la fecha de inicio">
-
-        <label for="end-date">Fecha de Fin:</label>
-        <input type="text" id="end-date" placeholder="Seleccione la fecha de fin">
-
-        <button id="fetch-data">Obtener Datos</button>
-    </div>
-
-    <!-- Contenedor del mapa -->
-    <div id="map"></div>
-
-    <!-- Cargar la librería Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <!-- Incluir el script de Google Maps y la lógica del mapa -->
+</head>
+
+<body>
+    <div id="title">
+        <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
+        <h1>Historical</h1>
+    </div>
+
+    <div class="wrapper">
+       
+            <label for="start-date"><b>Start Date</b></label>
+            <input type="text" id="start-date" placeholder="Select a date" name="start-date">
+            <label for="end-date"><b>End Date</b></label>
+            <input type="text" id="end-date" placeholder="Select a date" name="end-date">
+            
+            <button id="fetch-data">See Data</button>
+        </div>
+        <div id="map-container">
+            <h3>Google Maps</h3>
+            <div id="map">
+                <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
+                <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
+                </gmp-map>
+            </div>
+        </div>
+    </div>
+
     <script src="script2.js"></script>
+  
+
+
 </body>
 </html>
-
 
 
