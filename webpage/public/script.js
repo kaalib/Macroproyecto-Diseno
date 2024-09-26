@@ -131,5 +131,5 @@ function convertToLocalTime(utcDateString) {
 setInterval(fetchLatestLocation, 10000);
 
 document.getElementById('historicalDataBtn').addEventListener('click', () => {
-    window.open('/historical.html', '_blank'); // Abre en una nueva pestaña
+    window.open('/historical'); // Abre en una nueva pestaña
 });
