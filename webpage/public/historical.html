@@ -19,8 +19,11 @@
             <h2>Select Date and Time</h2>
 
             <!-- Selección de rango de fechas -->
-            <label for="date-range">Choose a date range:</label>
-            <input type="text" id="date-range" placeholder="Select Date Range" />
+            <label for="start-date">Start Date:</label>
+            <input type="text" id="start-date" placeholder="Select Start Date" />
+
+            <label for="end-date">End Date:</label>
+            <input type="text" id="end-date" placeholder="Select End Date" />
 
             <div>
                 <input type="checkbox" id="singleDay" name="singleDay">
@@ -33,7 +36,7 @@
                 <input type="text" id="time-range" placeholder="HH:MM to HH:MM" />
             </div>
 
-            <button id="submit-btn">Get Historical Data</button>
+            <button id="fetch-data">Get Historical Data</button> <!-- Asegúrate de que el ID coincida -->
             <div id="error" style="color: red; display: none;"></div> <!-- Para mostrar errores -->
         </div>
 
@@ -46,4 +49,5 @@
     <script src="script2.js"></script> <!-- Enlaza tu script específico para esta página -->
 </body>
 </html>
+
 
