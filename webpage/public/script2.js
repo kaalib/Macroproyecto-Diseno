@@ -3,8 +3,6 @@ let polyline;
 let path = [];
 let directionsService;
 
-app.use(express.json()); // Para poder parsear JSON
-
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
     // Configurar Flatpickr para el rango de fechas
