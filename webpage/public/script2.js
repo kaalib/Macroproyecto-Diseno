@@ -4,53 +4,97 @@ let polyline;
 let path = [];
 let directionsService;
 
-// Configurar Flatpickr para el rango de fechas
-flatpickr("#date-range", {
-    mode: "range",
-    dateFormat: "Y-m-d", // Formato de la fecha
-    allowInput: true // Permitir que el usuario escriba la fecha manualmente si quiere
-});
+// Esperar a que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', () => {
+    // Configurar Flatpickr para el rango de fechas
+    flatpickr("#date-range", {
+        mode: "range",
+        dateFormat: "Y-m-d", // Formato de la fecha
+        allowInput: true // Permitir que el usuario escriba la fecha manualmente si quiere
+    });
 
-// Configurar Flatpickr para el rango de horas (opcional)
-flatpickr("#time-range", {
-    enableTime: true,
-    noCalendar: true, // Solo para horas
-    dateFormat: "H:i", // Formato de hora 24h
-    time_24hr: true,
-    mode: "range" // Permite seleccionar un rango de horas
-});
+    // Configurar Flatpickr para el rango de horas (opcional)
+    flatpickr("#time-range", {
+        enableTime: true,
+        noCalendar: true, // Solo para horas
+        dateFormat: "H:i", // Formato de hora 24h
+        time_24hr: true,
+        mode: "range" // Permite seleccionar un rango de horas
+    });
 
-// Función para manejar la validación y el envío de la consulta
-document.getElementById('submit-btn').addEventListener('click', () => {
-    const dateRange = document.getElementById('date-range').value;
-    const timeRange = document.getElementById('time-range').value;
+    // Manejador para el evento de envío
+    document.getElementById('submit-btn').addEventListener('click', () => {
+        const dateRange = document.getElementById('date-range').value;
+        const timeRange = document.getElementById('time-range').value;
 
-    if (!dateRange) {
-        alert('Debes seleccionar un rango de fechas.');
-        return;
-    }
-
-    const dates = dateRange.split(" to ");
-    const startDate = dates[0];
-    const endDate = dates[1] || startDate; // Si no hay fecha final, se toma solo el primer día
-
-    let startTime, endTime;
-
-    if (timeRange) {
-        const times = timeRange.split(" to ");
-        startTime = times[0];
-        endTime = times[1] || '23:59';
-
-        if (startDate === endDate && startTime >= endTime) {
-            alert('El rango de horas es incorrecto. La hora de inicio debe ser menor que la hora de fin.');
+        if (!dateRange) {
+            alert('Debes seleccionar un rango de fechas.');
             return;
         }
-    }
 
-    // Enviar la solicitud al servidor
-    fetchHistoricalData(startDate, endDate, startTime, endTime);
+        const dates = dateRange.split(" to ");
+        const startDate = dates[0];
+        const endDate = dates[1] || startDate; // Si no hay fecha final, se toma solo el primer día
+
+        let startTime, endTime;
+
+        if (timeRange) {
+            const times = timeRange.split(" to ");
+            startTime = times[0];
+            endTime = times[1] || '23:59';
+
+            if (startDate === endDate && startTime >= endTime) {
+                alert('El rango de horas es incorrecto. La hora de inicio debe ser menor que la hora de fin.');
+                return;
+            }
+        }
+
+        // Enviar la solicitud al servidor
+        fetchHistoricalData(startDate, endDate, startTime, endTime);
+    });
+
+    // Manejador para el checkbox que muestra/oculta el selector de tiempo
+    document.getElementById('singleDay').addEventListener('change', function() {
+        const timeRangeContainer = document.getElementById('timeRangeContainer');
+        timeRangeContainer.style.display = this.checked ? 'none' : 'block'; // Muestra/oculta el contenedor de tiempo
+    });
+
+    // Cargar el mapa
+    loadMap();
 });
 
+// Inicializar el mapa de Google Maps
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 0, lng: 0 },
+        zoom: 14
+    });
+
+    polyline = new google.maps.Polyline({
+        path: path,
+        strokeColor: '#6F2F9E',
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+        geodesic: true,
+        map: map
+    });
+
+    directionsService = new google.maps.DirectionsService();
+}
+
+// Cargar el mapa con la clave de la API de Google Maps
+function loadMap() {
+    fetch('/api_key')
+        .then(response => response.json())
+        .then(data => {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        })
+        .catch(err => console.error('Error fetching API key:', err));
+}
 
 // Función para hacer la solicitud de datos históricos al servidor
 function fetchHistoricalData(startDate, endDate, startTime = '00:00', endTime = '23:59') {
@@ -100,6 +144,7 @@ function displayHistoricalDataOnMap(locations) {
     }
 }
 
+
 // Inicializar el mapa de Google Maps
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -136,3 +181,4 @@ function loadMap() {
 
 
 loadMap(); // Cargar el mapa al cargar la página
+
