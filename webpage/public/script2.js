@@ -49,6 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Crear objeto de datos a enviar
+    const query = {
+        startDate,
+        endDate,
+        startTime,
+        endTime
+    };
+
+    // Log de los datos enviados al servidor
+    console.log('Datos enviados al servidor:', query);
+
         // Enviar la solicitud al servidor
         fetchHistoricalData(startDate, endDate, startTime, endTime);
     });
