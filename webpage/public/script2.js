@@ -118,9 +118,9 @@ function drawPolyline(origin, destination) {
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor: colors[colorIndex],
+        strokeColor: '#6F2F9E',
         strokeOpacity: 1.0,
-        strokeWeight: 4
+        strokeWeight: 5
     });
 
     polyline.setMap(map);
@@ -137,9 +137,9 @@ function drawPolylineHistorics(origin, destination) {
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor: '#3498db',
-        strokeOpacity: 0.8,
-        strokeWeight: 3
+        strokeColor: '#6F2F9E',
+        strokeOpacity: 1.0,
+        strokeWeight: 5
     });
 
     polyline.setMap(map);
