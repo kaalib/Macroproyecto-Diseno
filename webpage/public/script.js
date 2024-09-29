@@ -2,18 +2,14 @@ let map;
 let marker;
 let polyline;
 let path = [];
-let directionsService;
 
-async function initMap() {
-    const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    map = new Map(document.getElementById('map'), {
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
-        zoom: 14,
-        mapId: "DEMO_MAP_ID"
+        zoom: 14
     });
-    
-    marker = new AdvancedMarkerElement({
+
+    marker = new google.maps.Marker({
         position: { lat: 0, lng: 0 },
         map: map
     });
@@ -72,7 +68,7 @@ function fetchLatestLocation() {
 
             const latLng = new google.maps.LatLng(roundedLat, roundedLng);
             map.setCenter(latLng);
-            marker.position = latLng;
+            marker.setPosition(latLng);
 
             updateRoute(latLng);
         })
@@ -80,17 +76,8 @@ function fetchLatestLocation() {
 }
 
 function updateRoute(newPoint) {
-    if (path.length === 0) {
-        path.push(newPoint);
-        polyline.setPath(path);
-    } else {
-        const lastPoint = path[path.length - 1];
-        const request = {
-            origin: lastPoint,
-            destination: newPoint,
-            travelMode: 'DRIVING'
-        };
-    }
+    path.push(newPoint);  // Añade el nuevo punto al array `path`
+    polyline.setPath(path);  // Actualiza la polilínea con la nueva ruta
 }
 
 // Función para convertir UTC a la hora local
