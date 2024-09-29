@@ -4,18 +4,20 @@ let polyline;
 let path = [];
 let directionsService;
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
+async function initMap() {
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    map = new Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
-        zoom: 14
+        zoom: 14,
+        mapId: "DEMO_MAP_ID"
     });
     
-    marker = new google.maps.Marker({
+    marker = new AdvancedMarkerElement({
         position: { lat: 0, lng: 0 },
         map: map
     });
 
-    directionsService = new google.maps.DirectionsService();
 
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
@@ -70,7 +72,7 @@ function fetchLatestLocation() {
 
             const latLng = new google.maps.LatLng(roundedLat, roundedLng);
             map.setCenter(latLng);
-            marker.setPosition(latLng);
+            marker.position = latLng;
 
             updateRoute(latLng);
         })
@@ -88,24 +90,6 @@ function updateRoute(newPoint) {
             destination: newPoint,
             travelMode: 'DRIVING'
         };
-
-        directionsService.route(request, (result, status) => {
-            if (status === 'OK') {
-                const newPath = result.routes[0].overview_path;
-                path = path.concat(newPath);
-                polyline.setPath(path);
-
-                // Ajustar el zoom para ver toda la ruta
-                const bounds = new google.maps.LatLngBounds();
-                path.forEach(point => bounds.extend(point));
-                map.fitBounds(bounds);
-            } else {
-                console.error('Error al obtener la ruta:', status);
-                // Si falla la obtención de la ruta, simplemente añadimos el punto
-                path.push(newPoint);
-                polyline.setPath(path);
-            }
-        });
     }
 }
 
