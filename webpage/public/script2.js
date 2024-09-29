@@ -5,26 +5,6 @@ let routeCoordinates = [];
 let lastTimestamp = null;
 let live;
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 0, lng: 0 },
-        zoom: 14
-    });
-    
-    marker = new google.maps.Marker({
-        position: { lat: 0, lng: 0 },
-        map: map
-    });
-
-    polyline = new google.maps.Polyline({
-        path: path,
-        strokeColor: '#6F2F9E',
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-        geodesic: true,
-        map: map
-    });
-}
 
 function loadMap() {
     fetch('/api_key')
@@ -67,13 +47,13 @@ async function initMap() {
     map = new Map(document.getElementById("map"), {
         zoom: 14,
         center: initialPosition,
-        mapId: "DEMO_MAP_ID",
+        mapId: "DEMO_MAP_ID"
     });
 
     marker = new AdvancedMarkerElement({
         map: map,
         position: initialPosition,
-        title: "Current Location",
+        title: "Current Location"
     });
 }
 
@@ -100,6 +80,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 function updateMapAndRouteHistorics(lat, lng, timestamp) {
+    console.log(lat, lng);
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
     
@@ -245,7 +226,7 @@ document.getElementById('obtenerHistoricos').addEventListener('click', () => {
                     alert("no routes found")
                 } else{// Process the received data 
                     data.forEach(data => { //execute for every object in JSON
-                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                        updateMapAndRouteHistorics(data.latitude, data.longitude, data.timestamp);
                     });}
                 
             })
