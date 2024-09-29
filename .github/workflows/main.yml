@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2  
-        
       - name: Deploy to EC2
         run: |
           cd webpage
           npm install
-         pm2 reload DesingProject
+          pm2 reload DesingProject
+
 
