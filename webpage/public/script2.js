@@ -110,19 +110,9 @@ function drawPolylineHistorics(origin, destination) {
 }
 
 function convertToGlobalTime(localTime) {
-    const utcDate = new Date(localTime);
-    const options = {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZone: 'UTC'
-    };
-    return utcDate.toLocaleDateString('en-GB', options);
+    return localTime;  // Ya no convierte, simplemente retorna la hora tal como está
 }
+
 
 function formatDateTime(dateTime) {
     const [date, time] = dateTime.split(', ');
