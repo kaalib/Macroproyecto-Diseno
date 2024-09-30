@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <title>Mapa de Datos Históricos</title>
     <style>
         #map {
@@ -13,24 +14,37 @@
         .controls {
             margin-bottom: 20px;
         }
+        .control-group {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>Mapa de Datos Históricos</h1>
     
     <div class="controls">
-        <label for="startDate">Fecha de inicio:</label>
-        <input type="date" id="startDate" required>
+        <div class="control-group">
+            <label for="startDate">Fecha y hora de inicio:</label>
+            <input type="text" id="startDate" required>
+        </div>
         
-        <label for="endDate">Fecha de fin:</label>
-        <input type="date" id="endDate" required>
+        <div class="control-group">
+            <label for="endDate">Fecha y hora de fin:</label>
+            <input type="text" id="endDate" required>
+        </div>
         
         <button id="obtenerHistoricos">Obtener Datos Históricos</button>
     </div>
     
     <div id="map"></div>
 
+    <script>
+
+    </script>
+    
+    <!-- Cargar el archivo JavaScript con la lógica para el mapa -->
     <script src="script2.js"></script>
 </body>
 </html>
+
 
