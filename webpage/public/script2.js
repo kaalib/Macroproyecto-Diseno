@@ -3,8 +3,6 @@ let marker;
 let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
-let live;
-
 
 function loadMap() {
     fetch('/api_key')
@@ -19,24 +17,26 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
-flatpickr("#start-date", {
-    dateFormat: "Y-m-d H:i",
-    maxDate: new Date(),
-    enableTime: true,
-    onClose: function(selectedDates, dateStr, instance) {
-        date1 = dateStr;
-        console.log(date1)
-    }
-});
-flatpickr("#end-date", {
-    dateFormat: "Y-m-d H:i",
-    maxDate: new Date(),
-    enableTime: true,
-    onClose: function(selectedDates, dateStr, instance) {
-        date2 = dateStr;
-        console.log(date2)
-    }
-});
+    // Inicialización de Flatpickr para seleccionar tanto fecha como hora
+    flatpickr("#startDate", {
+        dateFormat: "Y-m-d H:i",  // Formato de fecha y hora
+        enableTime: true,         // Habilitar selección de hora
+        time_24hr: true,          // Formato de 24 horas
+        maxDate: new Date(),      // No permitir seleccionar una fecha futura
+        onClose: function(selectedDates, dateStr, instance) {
+            console.log("Fecha de inicio seleccionada:", dateStr);
+        }
+    });
+
+    flatpickr("#endDate", {
+        dateFormat: "Y-m-d H:i",  // Formato de fecha y hora
+        enableTime: true,         // Habilitar selección de hora
+        time_24hr: true,          // Formato de 24 horas
+        maxDate: new Date(),      // No permitir seleccionar una fecha futura
+        onClose: function(selectedDates, dateStr, instance) {
+            console.log("Fecha de fin seleccionada:", dateStr);
+        }
+    });
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
@@ -57,75 +57,37 @@ async function initMap() {
     });
 }
 
-function roundCoordinate(coord) {
-    return Number(coord.toFixed(4));
-}
-
 function isSameLocation(coord1, coord2) {
-    return roundCoordinate(coord1.lat) === roundCoordinate(coord2.lat) &&
-           roundCoordinate(coord1.lng) === roundCoordinate(coord2.lng);
-}
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth's radius
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c; // distance in kilometers
-    return distance;
+    return Math.round(coord1.lat * 10000) === Math.round(coord2.lat * 10000) &&
+           Math.round(coord1.lng * 10000) === Math.round(coord2.lng * 10000);
 }
 
 function updateMapAndRouteHistorics(lat, lng, timestamp) {
     console.log(lat, lng);
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
-    
-    // Always update HTML display and marker position
+
+    // Actualiza la posición del marcador y centra el mapa en la nueva ubicación
     marker.position = newPosition;
     map.panTo(newPosition);
-    
+
     if (routeCoordinates.length === 0) {
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
     } else {
         const lastPosition = routeCoordinates[routeCoordinates.length - 1];
-        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
-        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
-        
-        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // Diferencia en minutos
+
+        if (!isSameLocation(newPosition, lastPosition) && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
-        } else if (distance > 1 || timeDiff >= 1) {
-            // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
-            // Start a new route from that point
+        } else if (timeDiff >= 1) {
+            // Si la diferencia de tiempo es mayor o igual a 1 minuto, comienza una nueva ruta
             routeCoordinates = [newPosition];
         }
 
         lastTimestamp = newTimestamp;
     }
-}
-
-function drawPolyline(origin, destination) {
-    const path = [
-        new google.maps.LatLng(origin.lat, origin.lng),
-        new google.maps.LatLng(destination.lat, destination.lng)
-    ];
-
-    const polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: '#6F2F9E',
-        strokeOpacity: 1.0,
-        strokeWeight: 5
-    });
-
-    polyline.setMap(map);
-    polylines.push(polyline);
-    console.log("Polyline drawn successfully");
 }
 
 function drawPolylineHistorics(origin, destination) {
@@ -145,21 +107,6 @@ function drawPolylineHistorics(origin, destination) {
     polyline.setMap(map);
     polylines.push(polyline);
     console.log("Polyline drawn successfully");
-}
-
-function convertToLocalTime(utcDateString) {
-    const localDate = new Date(utcDateString); 
-    const options = {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZone: 'America/Bogota'
-    };   
-    return localDate.toLocaleString('en-GB', options);
 }
 
 function convertToGlobalTime(localTime) {
@@ -198,37 +145,33 @@ function clearMap() {
 }
 
 document.getElementById('obtenerHistoricos').addEventListener('click', () => {
-
     let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
 
-    const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
+    const correctDates = checkDates(startDate, endDate); // Verifica si la fecha de inicio es anterior a la de fin
     if (startDate && endDate && correctDates) {
-        startDate = convertToGlobalTime(startDate); //Convert date to UTC time zone
-        endDate = convertToGlobalTime(endDate); //Convert date to UTC time zone
+        startDate = convertToGlobalTime(startDate); // Convierte la fecha a UTC
+        endDate = convertToGlobalTime(endDate); // Convierte la fecha a UTC
 
-        date1 = formatDateTime(startDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
-        date2 = formatDateTime(endDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+        date1 = formatDateTime(startDate); // Formato: YYYY-MM-DD HH:MM:SS
+        date2 = formatDateTime(endDate); // Formato: YYYY-MM-DD HH:MM:SS
 
-        // Clear the map before fetching new data
-        clearMap();
+        clearMap(); // Limpia el mapa antes de cargar nuevas rutas
 
-        // Construct the URL with encoded date parameters for fetching historical data
         const url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
-
         console.log("Encoded URL:", url);  
-        fetch(url) 
+        
+        fetch(url)
             .then(response => response.json())
             .then(data => {
-                console.log('Data fetched:', data); //for debugging reasons
-                console.log(data.length);
-                if (data.length == 0){
-                    alert("no routes found")
-                } else{// Process the received data 
-                    data.forEach(data => { //execute for every object in JSON
+                console.log('Data fetched:', data);
+                if (data.length === 0) {
+                    alert("No routes found");
+                } else {
+                    data.forEach(data => {
                         updateMapAndRouteHistorics(data.latitude, data.longitude, data.timestamp);
-                    });}
-                
+                    });
+                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -239,4 +182,3 @@ document.getElementById('obtenerHistoricos').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', loadMap);
-initMap();
