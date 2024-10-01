@@ -101,7 +101,7 @@ app.get('/geocode', async (req, res) => {
 });
 
 app.get('/nearby', (req, res) => {
-    const { lat, lng, radius = 0.25 } = req.query;  // Radius en km, opcional con valor por defecto 1
+    const { lat, lng, radius = 0.5 } = req.query;  // Radius en km, opcional con valor por defecto 1
 
     if (!lat || !lng) {
         return res.status(400).json({ error: 'Lat and Lng parameters are required' });
