@@ -74,7 +74,6 @@ app.get('/historics', (req, res) => {
     });
 });
 
-// Nueva ruta para geocodificar una dirección
 app.get('/geocode', async (req, res) => {
     const { address } = req.query;
 
