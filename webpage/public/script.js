@@ -1,14 +1,7 @@
 let map;
 let marker;
-<<<<<<< HEAD
-let polyline;  
-let path = []; 
-let directionsService;
-let directionsRenderer;
-=======
 let polyline;
 let path = [];
->>>>>>> 9e83340857fb310708aaec33fefbf1be295c5fd7
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -21,19 +14,6 @@ function initMap() {
         map: map
     });
 
-<<<<<<< HEAD
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-
-
-    polyline = new google.maps.Polyline({
-        path: path,  
-        strokeColor: '6F2F9E', 
-        strokeOpacity: 1.0,  
-        strokeWeight: 5,  
-        map: map  
-=======
 
     // Inicializa la polilínea que seguirá la ruta personalizada
     polyline = new google.maps.Polyline({
@@ -43,7 +23,6 @@ function initMap() {
         strokeWeight: 5,
         geodesic: true,
         map: map
->>>>>>> 9e83340857fb310708aaec33fefbf1be295c5fd7
     });
 
     fetchLatestLocation(); // Llama a la función que obtiene la ubicación
@@ -91,14 +70,7 @@ function fetchLatestLocation() {
             map.setCenter(latLng);
             marker.setPosition(latLng);
 
-<<<<<<< HEAD
-            path.push(latLng);
-            polyline.setPath(path);
-
-            
-=======
             updateRoute(latLng);
->>>>>>> 9e83340857fb310708aaec33fefbf1be295c5fd7
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
