@@ -1,0 +1,78 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Evita desplazamiento horizontal */
+    }
+
+    /* header */
+    header {
+    background-color: #6F2F9E; 
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 40px auto; /* to ensure distance between header and body */
+    }
+
+    .left-section {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    }
+
+/* Estilo para la imagen */
+    .left-section img {
+    height: 150px;
+    margin-bottom: 20px; /* Espacio entre imagen y texto */
+    }
+
+/* Estilo para el texto LIEU con efecto 3D */
+    .left-section h1 {
+    font-size: 100px; /* Tamaño del texto grande para igualar la imagen */
+    font-weight: bold;
+    color: #6F2F9E;
+    margin: 0;
+    text-align: center;
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra para simular 3D */
+    font-family: 'Arial', sans-serif; /* Puedes cambiar a otra fuente si prefieres */
+    }
+
+    .data {
+    margin: 10px 0;
+    text-align: center;
+    color: #000000;
+
+
+    }
+
+
+
+    .right-section {
+    width: 55%;
+    }
+
+    h2 {
+    color: #6F2F9E;
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    }
+
+    #map {
+    height: 500px;
+    width: 100%;
+    border-radius: 15px;
+    }

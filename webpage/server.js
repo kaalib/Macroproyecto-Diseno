@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
 const app = express();
+const axios = require('axios'); 
 const port = 80; 
 
 const DDNS_HOST = process.env.DDNS_HOST;
@@ -41,6 +42,8 @@ function fetchDataFromDatabase() {
 setInterval(fetchDataFromDatabase, 8000);
 
 
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/data', (req, res) => {
@@ -55,7 +58,70 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
+//Handled GET request to the '/historics' endpoint
+app.get('/historics', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    // Validate that both start date and end date are provided
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
+    }
+    // Construct SQL query to retrieve locations within the specified data range
+    const query = `SELECT * FROM coordinates WHERE timestamp BETWEEN '${startDate}' AND '${endDate}'`;
+    pool.query(query, (err, results) => {
+        if (err) throw err;
+        res.json(results)
+    });
+});
+
+// Nueva ruta para geocodificar una dirección
+app.get('/geocode', async (req, res) => {
+    const { address } = req.query;
+
+    if (!address) {
+        return res.status(400).json({ error: 'Address parameter is required' });
+    }
+
+    try {
+        const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+        const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+        
+        const response = await axios.get(geocodeUrl);
+        const data = response.data;
+
+        if (data.status === 'OK' && data.results.length > 0) {
+            const location = data.results[0].geometry.location;
+            res.json({ lat: location.lat, lng: location.lng });
+        } else {
+            res.status(404).json({ error: 'Address not found' });
+        }
+    } catch (error) {
+        console.error('Error geocoding address:', error);
+        res.status(500).json({ error: 'Error processing request' });
+    }
+});
+
+app.get('/nearby', (req, res) => {
+    const { lat, lng, radius = 0.25 } = req.query;  // Radius en km, opcional con valor por defecto 1
+
+    if (!lat || !lng) {
+        return res.status(400).json({ error: 'Lat and Lng parameters are required' });
+    }
+
+    const query = `
+        SELECT *, 
+        (6371 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(longitude) - radians(${lng})) + sin(radians(${lat})) * sin(radians(latitude)))) AS distance
+        FROM coordinates
+        HAVING distance < ${radius}
+        ORDER BY timestamp;
+    `;
+
+    pool.query(query, (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://${DDNS_HOST}`);
 });
-

@@ -33,6 +33,27 @@ flatpickr("#endDate", {
 });
 
 // Inicializa el mapa
+    // Inicialización de Flatpickr para seleccionar tanto fecha como hora
+    flatpickr("#startDate", {
+        dateFormat: "Y-m-d H:i",  // Formato de fecha y hora
+        enableTime: true,         // Habilitar selección de hora
+        time_24hr: true,          // Formato de 24 horas
+        maxDate: new Date(),      // No permitir seleccionar una fecha futura
+        onClose: function(selectedDates, dateStr, instance) {
+            console.log("Fecha de inicio seleccionada:", dateStr);
+        }
+    });
+
+    flatpickr("#endDate", {
+        dateFormat: "Y-m-d H:i",  // Formato de fecha y hora
+        enableTime: true,         // Habilitar selección de hora
+        time_24hr: true,          // Formato de 24 horas
+        maxDate: new Date(),      // No permitir seleccionar una fecha futura
+        onClose: function(selectedDates, dateStr, instance) {
+            console.log("Fecha de fin seleccionada:", dateStr);
+        }
+    });
+
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
