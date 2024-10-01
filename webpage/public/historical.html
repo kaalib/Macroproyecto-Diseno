@@ -11,40 +11,55 @@
             height: 400px;
             width: 100%;
         }
+
         .controls {
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
+
         .control-group {
-            margin-bottom: 10px;
+            margin-right: 10px; 
+        }
+
+        .address-group {
+            display: flex;
+            align-items: center;
+        }
+
+        #address {
+            margin-right: 10px;
+            margin-left: 10px; 
         }
     </style>
 </head>
 <body>
     <h1>Mapa de Datos Históricos</h1>
-    
+
     <div class="controls">
         <div class="control-group">
             <label for="startDate">Fecha y hora de inicio:</label>
             <input type="text" id="startDate" required>
         </div>
-        
+
         <div class="control-group">
             <label for="endDate">Fecha y hora de fin:</label>
             <input type="text" id="endDate" required>
         </div>
-        
+
         <button id="obtenerHistoricos">Obtener Datos Históricos</button>
+
+        <div class="address-group">
+            <input type="text" id="address" placeholder="Enter a location" />
+            <button id="buscarPorDireccion">Buscar por dirección</button>
+        </div>
+
+        <div id="resultados"></div>
     </div>
-    
+
     <div id="map"></div>
 
-    <script>
-
-    </script>
-    
     <!-- Cargar el archivo JavaScript con la lógica para el mapa -->
     <script src="script2.js"></script>
 </body>
 </html>
-
-

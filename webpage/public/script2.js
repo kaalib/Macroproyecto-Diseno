@@ -180,4 +180,53 @@ document.getElementById('obtenerHistoricos').addEventListener('click', () => {
     }
 });
 
+document.getElementById('buscarPorDireccion').addEventListener('click', () => {
+    const address = document.getElementById('address').value;
+
+    if (address) {
+        clearMap();
+        
+        fetch(`/geocode?address=${encodeURIComponent(address)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.lat && data.lng) {
+                    const lat = data.lat;
+                    const lng = data.lng;
+
+                    // Buscar los puntos cercanos a esta ubicación
+                    const url = `/nearby?lat=${lat}&lng=${lng}`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(results => {
+                            console.log('Nearby results:', results);
+                            const resultadosDiv = document.getElementById('resultados');
+
+                            // Limpiar resultados anteriores
+                            resultadosDiv.innerHTML = ''; // Limpiar el contenido
+
+                            if (results.length === 0) {
+                                resultadosDiv.innerHTML = ''; // Asegurarse de que no haya texto
+                                alert("No data found near this location.");
+                            } else {
+                                resultadosDiv.innerHTML = '<h2>Fechas encontradas:</h2>'; // Encabezado
+
+                                results.forEach(result => {
+                                    // Convertir timestamp a formato legible
+                                    const readableDate = new Date(result.timestamp).toISOString().replace('T', ' ').substring(0, 19);
+                                    resultadosDiv.innerHTML += `${readableDate}<br>`;
+                                    updateMapAndRouteHistorics(result.latitude, result.longitude, result.timestamp);
+                                });
+                            }
+                        });
+                } else {
+                    alert('Location not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching location:', error);
+            });
+    } else {
+        alert('Please enter a location');
+    }
+});
 document.addEventListener('DOMContentLoaded', loadMap);
