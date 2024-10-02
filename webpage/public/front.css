@@ -69,12 +69,12 @@ html, body {
         cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     }
 
-    #historicalDataBtn:hover {
+    :hover {
         background-color: #5A228A; /* Color más oscuro al pasar el mouse */
     }
 
     #map {
-        height: 500px; /* Altura del mapa */
+        height: 450px; /* Altura del mapa */
         width: 100%; /* Ancho del mapa */
         border-radius: 15px; /* Bordes redondeados */
         margin-top: 20px; /* Espacio superior entre los datos y el mapa */
