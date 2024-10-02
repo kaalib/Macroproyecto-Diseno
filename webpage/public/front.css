@@ -75,7 +75,7 @@ html, body {
 
     #map {
         height: 450px; /* Altura del mapa */
-        width: 98%; /* Ancho del mapa */
+        width: 100%; /* Ancho del mapa */
         border-radius: 15px; /* Bordes redondeados */
         margin-top: 20px; /* Espacio superior entre los datos y el mapa */
     }
