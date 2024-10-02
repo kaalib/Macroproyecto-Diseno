@@ -9,32 +9,33 @@ function loadMap() {
         .then(response => response.json())
         .then(data => {
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap&libraries=places`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
         })
         .catch(err => console.error('Error fetching API key:', err));
-}   
-    flatpickr("#startDate", {
-        dateFormat: "Y-m-d H:i",  // Formato de fecha y hora
-        enableTime: true,         // Habilitar selección de hora
-        time_24hr: true,          // Formato de 24 horas
-        maxDate: new Date(),      // No permitir seleccionar una fecha futura
-        onClose: function(selectedDates, dateStr, instance) {
-            console.log("Fecha de inicio seleccionada:", dateStr);
-        }
-    });
+}
 
-    flatpickr("#endDate", {
-        dateFormat: "Y-m-d H:i",  // Formato de fecha y hora
-        enableTime: true,         // Habilitar selección de hora
-        time_24hr: true,          // Formato de 24 horas
-        maxDate: new Date(),      // No permitir seleccionar una fecha futura
-        onClose: function(selectedDates, dateStr, instance) {
-            console.log("Fecha de fin seleccionada:", dateStr);
-        }
-    });
+flatpickr("#startDate", {
+    dateFormat: "Y-m-d H:i",
+    enableTime: true,
+    time_24hr: true,
+    maxDate: new Date(),
+    onClose: function(selectedDates, dateStr, instance) {
+        console.log("Fecha de inicio seleccionada:", dateStr);
+    }
+});
+
+flatpickr("#endDate", {
+    dateFormat: "Y-m-d H:i",
+    enableTime: true,
+    time_24hr: true,
+    maxDate: new Date(),
+    onClose: function(selectedDates, dateStr, instance) {
+        console.log("Fecha de fin seleccionada:", dateStr);
+    }
+});
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
@@ -53,6 +54,32 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location"
     });
+
+    // Inicializa la función de autocompletar
+    initAutocomplete();
+}
+
+// Función para inicializar el Autocomplete
+function initAutocomplete() {
+    const input = document.getElementById('address');
+    
+    const options = {
+        types: ['geocode', 'establishment'],
+        componentRestrictions: { country: 'CO' }
+    };
+
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    // Listener para el evento de autocompletado
+    autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) {
+            console.error("No se pudo encontrar la ubicación");
+            return;
+        }
+        console.log("Sugerencia seleccionada:", place.formatted_address);
+        // Aquí no hacemos nada con el mapa ni con los marcadores
+    });
 }
 
 function isSameLocation(coord1, coord2) {
@@ -65,7 +92,6 @@ function updateMapAndRouteHistorics(lat, lng, timestamp) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
 
-    // Actualiza la posición del marcador y centra el mapa en la nueva ubicación
     marker.position = newPosition;
     map.panTo(newPosition);
 
@@ -74,13 +100,12 @@ function updateMapAndRouteHistorics(lat, lng, timestamp) {
         lastTimestamp = newTimestamp;
     } else {
         const lastPosition = routeCoordinates[routeCoordinates.length - 1];
-        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // Diferencia en minutos
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60);
 
         if (!isSameLocation(newPosition, lastPosition) && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
         } else if (timeDiff >= 1) {
-            // Si la diferencia de tiempo es mayor o igual a 1 minuto, comienza una nueva ruta
             routeCoordinates = [newPosition];
         }
 
@@ -138,22 +163,21 @@ function clearMap() {
     polylines = [];
     routeCoordinates = [];
     lastTimestamp = null;
-    colorIndex = 0;
 }
 
 document.getElementById('obtenerHistoricos').addEventListener('click', () => {
     let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
 
-    const correctDates = checkDates(startDate, endDate); // Verifica si la fecha de inicio es anterior a la de fin
+    const correctDates = checkDates(startDate, endDate);
     if (startDate && endDate && correctDates) {
-        startDate = convertToGlobalTime(startDate); // Convierte la fecha a UTC
-        endDate = convertToGlobalTime(endDate); // Convierte la fecha a UTC
+        startDate = convertToGlobalTime(startDate);
+        endDate = convertToGlobalTime(endDate);
 
-        date1 = formatDateTime(startDate); // Formato: YYYY-MM-DD HH:MM:SS
-        date2 = formatDateTime(endDate); // Formato: YYYY-MM-DD HH:MM:SS
+        date1 = formatDateTime(startDate);
+        date2 = formatDateTime(endDate);
 
-        clearMap(); // Limpia el mapa antes de cargar nuevas rutas
+        clearMap();
 
         const url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
         console.log("Encoded URL:", url);  
@@ -191,7 +215,6 @@ document.getElementById('buscarPorDireccion').addEventListener('click', () => {
                     const lat = data.lat;
                     const lng = data.lng;
 
-                    // Buscar los puntos cercanos a esta ubicación
                     const url = `/nearby?lat=${lat}&lng=${lng}`;
                     fetch(url)
                         .then(response => response.json())
@@ -199,7 +222,6 @@ document.getElementById('buscarPorDireccion').addEventListener('click', () => {
                             console.log('Nearby results:', results);
                             const resultadosDiv = document.getElementById('resultados');
 
-                            // Limpiar resultados anteriores
                             resultadosDiv.innerHTML = ''; // Limpiar el contenido
 
                             if (results.length === 0) {
@@ -209,7 +231,6 @@ document.getElementById('buscarPorDireccion').addEventListener('click', () => {
                                 resultadosDiv.innerHTML = '<h2>Fechas encontradas:</h2>'; // Encabezado
 
                                 results.forEach(result => {
-                                    // Convertir timestamp a formato legible
                                     const readableDate = new Date(result.timestamp).toISOString().replace('T', ' ').substring(0, 19);
                                     resultadosDiv.innerHTML += `${readableDate}<br>`;
                                     updateMapAndRouteHistorics(result.latitude, result.longitude, result.timestamp);
@@ -227,4 +248,6 @@ document.getElementById('buscarPorDireccion').addEventListener('click', () => {
         alert('Please enter a location');
     }
 });
+
 document.addEventListener('DOMContentLoaded', loadMap);
+
