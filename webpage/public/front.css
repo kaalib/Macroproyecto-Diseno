@@ -69,7 +69,7 @@ html, body {
         cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     }
 
-    :hover {
+    #historicalDataBtn:hover {
         background-color: #5A228A; /* Color más oscuro al pasar el mouse */
     }
 
