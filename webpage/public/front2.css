@@ -1,68 +1,93 @@
 
 
 #map {
-    height: 400px; /* Altura del mapa */
+    height: 500px; /* Altura del mapa */
     width: 100%; /* Ancho del mapa */
     border-radius: 10px; /* Bordes redondeados */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
 }
 
-#buscarPorDireccion {
-    margin-left: 20px; /* Espacio entre los datos y el botón */
-    padding: 10px 20px; /* Espaciado interno del botón */
-    background-color: #6F2F9E; /* Color de fondo del botón */
-    color: #FFFFFF; /* Color del texto del botón */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Transición suave al pasar el mouse */
-}
 
-#buscarPorDireccion:hover {
-    background-color: #5A228A; /* Color más oscuro al pasar el mouse */
-}
+    header {
+        background-color: #6F2F9E; /* Fondo morado */
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Alinea el contenido verticalmente */
+        padding: 40px 20px; 
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 40px;
+    }
 
-#obtenerHistoricos {
-    margin-left: 15px; /* Espacio entre los datos y el botón */
-    margin-right: 15px;
-    padding: 10px 15px; /* Espaciado interno del botón */
-    background-color: #6F2F9E; /* Color de fondo del botón */
-    color: #FFFFFF; /* Color del texto del botón */
-    border: none; /* Sin borde */
-    border-radius: 3px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Transición suave al pasar el mouse */
-}
+    header h1 {
+        font-size: 50px; /* Tamaño del texto */
+        font-weight: bold;
+        color: #FFFFFF; /* Color blanco */
+        margin: 0;
+        text-align: center;
+        text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+        font-family: 'Arial', sans-serif;
+    }
+
+    #buscarPorDireccion {
+        margin-left: 20px; /* Espacio entre los datos y el botón */
+        padding: 10px 20px; /* Espaciado interno del botón */
+        background-color: #6F2F9E; /* Color de fondo del botón */
+        color: #FFFFFF; /* Color del texto del botón */
+        border: none; /* Sin borde */
+        border-radius: 5px; /* Bordes redondeados */
+        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+        transition: background-color 0.3s; /* Transición suave al pasar el mouse */
+    }
+
+    #buscarPorDireccion:hover {
+        background-color: #5A228A; /* Color más oscuro al pasar el mouse */
+    }
+
+    #obtenerHistoricos {
+        margin-left: 15px; /* Espacio entre los datos y el botón */
+        margin-right: 15px;
+        padding: 10px 15px; /* Espaciado interno del botón */
+        background-color: #6F2F9E; /* Color de fondo del botón */
+        color: #FFFFFF; /* Color del texto del botón */
+        border: none; /* Sin borde */
+        border-radius: 3px; /* Bordes redondeados */
+        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+        transition: background-color 0.3s; /* Transición suave al pasar el mouse */
+    }
 
 
-#obtenerHistoricos:hover {
-    background-color: #5A228A; /* Color más oscuro al pasar el mouse */
-}
+    #obtenerHistoricos:hover {
+        background-color: #5A228A; /* Color más oscuro al pasar el mouse */
+    }
 
-.controls {
-    margin-bottom: 10px; /* Espacio inferior */
-    display: flex; /* Organiza los elementos en fila */
-    align-items: center; /* Alinea verticalmente los elementos */
-}
+    .controls {
+        margin-bottom: 10px; /* Espacio inferior */
+        display: flex; /* Organiza los elementos en fila */
+        align-items: center; /* Alinea verticalmente los elementos */
+    }
 
-.control-group,
-.address-group {
-    margin-right: 15px; /* Espaciado entre grupos de control */
-    padding: 10px; /* Espaciado interno para cada grupo */
-    background-color: #ffffff; /* Color de fondo blanco para los grupos */
-    border: 1px solid #6F2F9E; /* Borde del grupo */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
-    display: flex; /* Organiza los elementos en fila */
-    align-items: center; /* Alinea verticalmente los elementos */
-}
+    .control-group,
+    .address-group {
+        margin-right: 15px; /* Espaciado entre grupos de control */
+        padding: 10px; /* Espaciado interno para cada grupo */
+        background-color: #ffffff; /* Color de fondo blanco para los grupos */
+        border: 1px solid #6F2F9E; /* Borde del grupo */
+        border-radius: 10px; /* Bordes redondeados */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+        display: flex; /* Organiza los elementos en fila */
+        align-items: center; /* Alinea verticalmente los elementos */
+    }
 
-#address {
-    margin-right: 15px; /* Espaciado a la derecha */
-    margin-left: 10px; /* Espaciado a la izquierda */
-    padding: 8px; /* Espaciado interno para el input */
-    border: 1px solid #ccc; /* Borde gris para el input */
-    border-radius: 5px; /* Bordes redondeados para el input */
-    font-family: 'Roboto', sans-serif; /* Fuente para el input */
-}
+    #address {
+        margin-right: 15px; /* Espaciado a la derecha */
+        margin-left: 10px; /* Espaciado a la izquierda */
+        padding: 8px; /* Espaciado interno para el input */
+        border: 1px solid #ccc; /* Borde gris para el input */
+        border-radius: 5px; /* Bordes redondeados para el input */
+        font-family: 'Roboto', sans-serif; /* Fuente para el input */
+    }
 
