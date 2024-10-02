@@ -1,11 +1,16 @@
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; /* Evita desplazamiento horizontal */
+        }
 
 
-#map {
-    height: 500px; /* Altura del mapa */
-    width: 100%; /* Ancho del mapa */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
-}
+    #map {
+        height: 450px; /* Altura del mapa */
+        width: 100%; /* Ancho del mapa */
+        border-radius: 15px; /* Bordes redondeados */
+        margin-top: 20px; /* Espacio superior entre los datos y el mapa */
+    }
 
 
     header {
@@ -19,11 +24,13 @@
         width: 100%;
         z-index: 1000;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        height: 40px;
+        height: 30px;
+        margin-bottom: 20px; 
+        margin-top: 0px;
     }
 
     header h1 {
-        font-size: 50px; /* Tamaño del texto */
+        font-size: 40px; /* Tamaño del texto */
         font-weight: bold;
         color: #FFFFFF; /* Color blanco */
         margin: 0;
@@ -66,7 +73,8 @@
     }
 
     .controls {
-        margin-bottom: 10px; /* Espacio inferior */
+        margin-bottom: 20px; /* Espacio inferior */
+        margin-left: 10px;
         display: flex; /* Organiza los elementos en fila */
         align-items: center; /* Alinea verticalmente los elementos */
     }
