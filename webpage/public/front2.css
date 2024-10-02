@@ -6,7 +6,7 @@
 
 
     #map {
-        height: 450px; /* Altura del mapa */
+        height: 600px; /* Altura del mapa */
         width: 100%; /* Ancho del mapa */
         border-radius: 15px; /* Bordes redondeados */
         margin-top: 20px; /* Espacio superior entre los datos y el mapa */
@@ -30,7 +30,7 @@
     }
 
     header h1 {
-        font-size: 40px; /* Tamaño del texto */
+        font-size: 60px; /* Tamaño del texto */
         font-weight: bold;
         color: #FFFFFF; /* Color blanco */
         margin: 0;
