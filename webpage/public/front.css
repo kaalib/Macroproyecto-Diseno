@@ -1,21 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Evita desplazamiento horizontal */
     }
 
-    /* header */
     header {
-    background-color: #6F2F9E; 
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #6F2F9E; /* Fondo morado */
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Alinea el contenido verticalmente */
+        padding: 40px 20px; 
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        height: 60px;
     }
+    
+    header h1 {
+        font-size: 50px; /* Tamaño del texto */
+        font-weight: bold;
+        color: #FFFFFF; /* Color blanco */
+        margin: 0;
+        text-align: center;
+        text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+        font-family: 'Arial', sans-serif;
+    }
+    
 
     .container {
     display: flex;
@@ -24,55 +38,44 @@ html, body {
     margin: 40px auto; /* to ensure distance between header and body */
     }
 
-    .left-section {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    /* Estilo para el contenedor de datos */
+    .data-container {
+        display: flex; /* Organiza los elementos en fila */
+        justify-content: center; /* Centra los elementos */
+        align-items: center; /* Alinea verticalmente los elementos */
+        margin: 20px 0; /* Margen superior e inferior */
     }
 
-/* Estilo para la imagen */
-    .left-section img {
-    height: 150px;
-    margin-bottom: 20px; /* Espacio entre imagen y texto */
-    }
-
-/* Estilo para el texto LIEU con efecto 3D */
-    .left-section h1 {
-    font-size: 100px; /* Tamaño del texto grande para igualar la imagen */
-    font-weight: bold;
-    color: #6F2F9E;
-    margin: 0;
-    text-align: center;
-    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra para simular 3D */
-    font-family: 'Arial', sans-serif; /* Puedes cambiar a otra fuente si prefieres */
-    }
-
+    /* Estilo para cada dato */
     .data {
-    margin: 10px 0;
-    text-align: center;
-    color: #000000;
-
-
+        margin: 0 15px; /* Espaciado horizontal entre los datos */
+        color: #000000; /* Color del texto */
+        text-align: center; /* Centra el texto */
+        padding: 20px; /* Espaciado interno */
+        background-color: #f9f9f9; /* Color de fondo del cuadrito */
+        border: 1px solid #6F2F9E; /* Borde del cuadrito */
+        border-radius: 10px; /* Bordes redondeados */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+        font-family: 'Roboto', sans-serif; /* Fuente más bonita */
     }
 
-
-
-    .right-section {
-    width: 55%;
+    #historicalDataBtn{
+        margin-left: 20px; /* Espacio entre los datos y el botón */
+        padding: 10px 20px; /* Espaciado interno del botón */
+        background-color: #6F2F9E; /* Color de fondo del botón */
+        color: #FFFFFF; /* Color del texto del botón */
+        border: none; /* Sin borde */
+        border-radius: 5px; /* Bordes redondeados */
+        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     }
 
-    h2 {
-    color: #6F2F9E;
-    font-size: 40px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
+    #historicalDataBtn:hover {
+        background-color: #5A228A; /* Color más oscuro al pasar el mouse */
     }
 
     #map {
-    height: 500px;
-    width: 100%;
-    border-radius: 15px;
+        height: 500px; /* Altura del mapa */
+        width: 100%; /* Ancho del mapa */
+        border-radius: 15px; /* Bordes redondeados */
+        margin-top: 20px; /* Espacio superior entre los datos y el mapa */
     }
