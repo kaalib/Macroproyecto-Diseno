@@ -165,7 +165,7 @@ function clearMap() {
     lastTimestamp = null;
 }
 
-document.getElementById('obtenerHistoricos').addEventListener('click', () => {
+document.getElementById('gethistorical').addEventListener('click', () => {
     let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
 
@@ -202,7 +202,7 @@ document.getElementById('obtenerHistoricos').addEventListener('click', () => {
     }
 });
 
-document.getElementById('buscarPorDireccion').addEventListener('click', () => {
+document.getElementById('searchbyaddress').addEventListener('click', () => {
     const address = document.getElementById('address').value;
 
     if (address) {
