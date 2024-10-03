@@ -101,7 +101,7 @@ app.get('/geocode', async (req, res) => {
 });
 
 app.get('/nearby', (req, res) => {
-    const { lat, lng, radius = 0.5 } = req.query;  // Radius en km, opcional con valor por defecto 1
+    const { lat, lng, radius = 500 } = req.query; 
 
     if (!lat || !lng) {
         return res.status(400).json({ error: 'Lat and Lng parameters are required' });
@@ -109,7 +109,7 @@ app.get('/nearby', (req, res) => {
 
     const query = `
         SELECT *, 
-        (6371 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(longitude) - radians(${lng})) + sin(radians(${lat})) * sin(radians(latitude)))) AS distance
+        (6371000 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(longitude) - radians(${lng})) + sin(radians(${lat})) * sin(radians(latitude)))) AS distance
         FROM coordinates
         HAVING distance < ${radius}
         ORDER BY timestamp;
