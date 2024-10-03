@@ -161,9 +161,19 @@ function drawPolylineHistorics(origin, destination, timestamp) {
 }
 function adjustForTimezone(dateTime) {
     const date = new Date(dateTime);
-    // Ajustar la fecha a UTC-5
-    const adjustedDate = new Date(date.getTime() + (5 * 60 * 60 * 1000)); // 5 horas en milisegundos
-    return adjustedDate.toLocaleString(); // Esto devolverá la fecha ajustada como string
+    const adjustedDate = new Date(date.getTime() + (5 * 60 * 60 * 1000)); 
+
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    };
+    
+    return adjustedDate.toLocaleString('en-GB', options); 
 }
 
 function convertToGlobalTime(localTime) {
