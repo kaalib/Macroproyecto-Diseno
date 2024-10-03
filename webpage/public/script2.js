@@ -133,8 +133,11 @@ function drawPolylineHistorics(origin, destination, timestamp) {
 
     markers.push(startMarker);
 
+    // Ajusta la fecha y hora según la zona horaria antes de usarla
+    const adjustedTimestamp = adjustForTimezone(timestamp);
+    
     const infoWindow = new google.maps.InfoWindow({
-        content: `<div><strong>Registered Date</strong><br> ${timestamp}</div>`, 
+        content: `<div><strong>Registered Date</strong><br> ${adjustedTimestamp}</div>`, 
         maxWidth: 200 
     });
 
@@ -155,6 +158,12 @@ function drawPolylineHistorics(origin, destination, timestamp) {
     polyline.setMap(map);
     polylines.push(polyline);
     console.log("Polyline drawn successfully");
+}
+function adjustForTimezone(dateTime) {
+    const date = new Date(dateTime);
+    // Ajustar la fecha a UTC-5
+    const adjustedDate = new Date(date.getTime() + (5 * 60 * 60 * 1000)); // 5 horas en milisegundos
+    return adjustedDate.toLocaleString(); // Esto devolverá la fecha ajustada como string
 }
 
 function convertToGlobalTime(localTime) {
