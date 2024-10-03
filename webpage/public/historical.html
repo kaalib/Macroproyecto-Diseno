@@ -11,27 +11,29 @@
 <body>
     <header>
         <h1>Historical Data</h1>
-        </header>
+    </header>
 
     <div class="controls">
-        <div class="control-group">
-            <label for="startDate">Fecha y hora de inicio:</label>
-            <input type="text" id="startDate" required>
+        <div id="timeControls" class="control-group">
+            <label for="startDate">Start Date:</label>
+            <input type="text" id="startDate" required >
+
+            <label for="endDate" style="margin-left: 10px;">End Date:</label>
+            <input type="text" id="endDate" required >
+
+            <button id="gethistorical">Get Historical</button>
+        </div>
+        
+        <div id="addressControls" class="address-group" style="display: none;">
+            <div id="addressInputContainer" style="display: flex; align-items: center;">
+                <input type="text" id="address" placeholder="Enter a location" style="flex: 1;" />
+                <span id="clearAddress" style="cursor: pointer; display: none; margin-right: 10px; color: #999;">&times;</span>
+                <button id="searchbyaddress" style="margin-left: 10px;">Search by Address</button>
+            </div>
         </div>
 
-        <div class="control-group">
-            <label for="endDate">Fecha y hora de fin:</label>
-            <input type="text" id="endDate" required>
-        </div>
+        <button id="toggleSearch">Switch to search by address</button>
 
-        <button id="gethistorical">get historical</button>
-
-        <div class="address-group">
-            <input type="text" id="address" placeholder="Enter a location" />
-            <button id="searchbyaddress">search by address</button>|
-
-            
-        </div>
         <div id="resultados"></div>
     </div>
 
