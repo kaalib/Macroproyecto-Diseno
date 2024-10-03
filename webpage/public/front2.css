@@ -118,6 +118,27 @@
         transition: background-color 0.3s; /* Transición suave al pasar el mouse */
     }
 
+    #clearAddress {
+        cursor: pointer;
+        display: none;
+        margin-right: 10px;
+        color: #999;
+        font-size: 24px;
+    }
+    
+    #clearAddress:hover {
+        color: #6F2F9E;
+    }
     #addressInputContainer {
         position: relative;
+    }
+    
+    #radiusInputContainer {
+        margin-top: 10px;
+        margin-left: 15px;
+        
+    }
+    #radiusInputContainer label {
+        font-size: 14px; /* Ajusta el tamaño según sea necesario */
+        font-family: 'Roboto', sans-serif; /* Fuente para el input */    
     }

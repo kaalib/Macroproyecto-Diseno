@@ -274,6 +274,7 @@ document.getElementById('gethistorical').addEventListener('click', () => {
 
 document.getElementById('searchbyaddress').addEventListener('click', () => {
     const address = document.getElementById('address').value;
+    const radius = document.getElementById('radius').value || 500; 
 
     if (address) {
         clearMap();
@@ -285,7 +286,7 @@ document.getElementById('searchbyaddress').addEventListener('click', () => {
                     const lat = data.lat;
                     const lng = data.lng;
 
-                    const url = `/nearby?lat=${lat}&lng=${lng}`;
+                    const url = `/nearby?lat=${lat}&lng=${lng}&radius=${radius}`;
                     fetch(url)
                         .then(response => response.json())
                         .then(results => {
