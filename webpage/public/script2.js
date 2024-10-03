@@ -3,6 +3,8 @@ let marker;
 let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
+let infoWindows = [];
+let markers = [];
 
 function loadMap() {
     fetch('/api_key')
@@ -22,7 +24,7 @@ flatpickr("#startDate", {
     enableTime: true,
     time_24hr: true,
     maxDate: new Date(),
-    onClose: function(selectedDates, dateStr, instance) {
+    onClose: function(dateStr) {
         console.log("Fecha de inicio seleccionada:", dateStr);
     }
 });
@@ -32,7 +34,7 @@ flatpickr("#endDate", {
     enableTime: true,
     time_24hr: true,
     maxDate: new Date(),
-    onClose: function(selectedDates, dateStr, instance) {
+    onClose: function(dateStr) {
         console.log("Fecha de fin seleccionada:", dateStr);
     }
 });
@@ -55,11 +57,9 @@ async function initMap() {
         title: "Current Location"
     });
 
-    // Inicializa la función de autocompletar
     initAutocomplete();
 }
 
-// Función para inicializar el Autocomplete
 function initAutocomplete() {
     const input = document.getElementById('address');
     
@@ -78,7 +78,6 @@ function initAutocomplete() {
             return;
         }
         console.log("Sugerencia seleccionada:", place.formatted_address);
-        // Aquí no hacemos nada con el mapa ni con los marcadores
     });
 }
 
@@ -104,7 +103,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp) {
 
         if (!isSameLocation(newPosition, lastPosition) && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            drawPolylineHistorics(lastPosition, newPosition);
+            drawPolylineHistorics(lastPosition, newPosition, lastTimestamp);
         } else if (timeDiff >= 1) {
             routeCoordinates = [newPosition];
         }
@@ -113,11 +112,37 @@ function updateMapAndRouteHistorics(lat, lng, timestamp) {
     }
 }
 
-function drawPolylineHistorics(origin, destination) {
+function drawPolylineHistorics(origin, destination, timestamp) {
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
+
+    const startMarker = new google.maps.Marker({
+        position: origin,
+        map: map,
+        title: "Inicio",
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 6,
+            fillColor: '#6F2F9E',
+            fillOpacity: 1,
+            strokeWeight: 2
+        }
+    });
+
+    markers.push(startMarker);
+
+    const infoWindow = new google.maps.InfoWindow({
+        content: `<div><strong>Registered Date</strong><br> ${timestamp}</div>`, 
+        maxWidth: 200 
+    });
+
+    infoWindows.push(infoWindow);
+
+    startMarker.addListener('click', function() {
+        infoWindow.open(map, startMarker);
+    });
 
     const polyline = new google.maps.Polyline({
         path: path,
@@ -159,11 +184,37 @@ function checkDates(dateStart, dateEnd) {
 }
 
 function clearMap() {
+    // Cerrar todas las InfoWindows
+    infoWindows.forEach(infoWindow => infoWindow.close());
+    infoWindows = []; // Limpiar el array de InfoWindows
+    
+    // Eliminar todos los marcadores
+    markers.forEach(marker => marker.setMap(null));
+    markers = []; // Limpiar el array de marcadores
+
+    // Eliminar todas las polilíneas
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     routeCoordinates = [];
     lastTimestamp = null;
 }
+
+const addressInput = document.getElementById('address');
+const clearAddress = document.getElementById('clearAddress');
+
+addressInput.addEventListener('input', function() {
+    if (addressInput.value) {
+        clearAddress.style.display = 'block';
+    } else {
+        clearAddress.style.display = 'none'; 
+    }
+});
+
+clearAddress.addEventListener('click', function() {
+    addressInput.value = ''; 
+    clearAddress.style.display = 'none'; 
+    addressInput.focus();
+});
 
 document.getElementById('gethistorical').addEventListener('click', () => {
     let startDate = document.getElementById('startDate').value;
@@ -220,22 +271,16 @@ document.getElementById('searchbyaddress').addEventListener('click', () => {
                         .then(response => response.json())
                         .then(results => {
                             console.log('Nearby results:', results);
-                            const resultadosDiv = document.getElementById('resultados');
-
-                            resultadosDiv.innerHTML = ''; // Limpiar el contenido
-
                             if (results.length === 0) {
-                                resultadosDiv.innerHTML = ''; // Asegurarse de que no haya texto
-                                alert("No data found near this location.");
+                                alert("No routes found");
                             } else {
-                                resultadosDiv.innerHTML = '<h2>Fechas encontradas:</h2>'; // Encabezado
-
                                 results.forEach(result => {
-                                    const readableDate = new Date(result.timestamp).toISOString().replace('T', ' ').substring(0, 19);
-                                    resultadosDiv.innerHTML += `${readableDate}<br>`;
                                     updateMapAndRouteHistorics(result.latitude, result.longitude, result.timestamp);
                                 });
                             }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching nearby routes:', error);
                         });
                 } else {
                     alert('Location not found');
@@ -249,5 +294,22 @@ document.getElementById('searchbyaddress').addEventListener('click', () => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', loadMap);
+document.getElementById('toggleSearch').addEventListener('click', () => {
+    const timeControls = document.getElementById('timeControls');
+    const addressControls = document.getElementById('addressControls');
 
+    if (timeControls.style.display === 'none') {
+        timeControls.style.display = 'block';
+        addressControls.style.display = 'none';
+        document.getElementById('toggleSearch').innerText = 'Switch to search by address';
+    } else {
+        timeControls.style.display = 'none';
+        addressControls.style.display = 'block';
+        document.getElementById('toggleSearch').innerText = 'Switch to time search';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadMap();
+    document.getElementById('addressControls').style.display = 'none'; // Ocultar controles de dirección al principio
+});

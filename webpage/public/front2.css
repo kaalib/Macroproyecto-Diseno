@@ -105,3 +105,19 @@
         width: 300px;
     }
 
+    
+    #toggleSearch {
+        margin-left: 15px; /* Espacio entre los datos y el botón */
+        margin-right: 15px;
+        padding: 10px 15px; /* Espaciado interno del botón */
+        background-color: #6F2F9E; /* Color de fondo del botón */
+        color: #FFFFFF; /* Color del texto del botón */
+        border: none; /* Sin borde */
+        border-radius: 3px; /* Bordes redondeados */
+        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+        transition: background-color 0.3s; /* Transición suave al pasar el mouse */
+    }
+
+    #addressInputContainer {
+        position: relative;
+    }
