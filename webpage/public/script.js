@@ -75,59 +75,69 @@ function fetchLatestLocation() {
         .catch(err => console.error('Error fetching latest location:', err));
 }
 
-    function updateRoute(newPoint) {
-        path.push(newPoint);  // Añade el nuevo punto al array `path`
-        polyline.setPath(path);  // Actualiza la polilínea con la nueva ruta
+function updateRoute(newPoint) {
+    path.push(newPoint);  // Añade el nuevo punto al array `path`
+    polyline.setPath(path);  // Actualiza la polilínea con la nueva ruta
+}
+
+// Función para convertir UTC a la hora local
+function convertToLocalTime(utcDateString) {
+    const localDate = new Date(utcDateString);
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'UTC'
+    };
+
+    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(localDate);
+    return formattedDate;
+}
+
+// Actualiza la ubicación cada 10 segundos
+setInterval(fetchLatestLocation, 10000);
+
+// Evento para cambiar a la pestaña de datos históricos
+document.getElementById('historicalDataBtn').addEventListener('click', (event) => {
+    openTab(event, 'Historico'); // Abre la pestaña de Datos Históricos
+});
+
+// Evento para cambiar a la pestaña de mapa actual
+document.getElementById('realtimeBtn').addEventListener('click', (event) => {
+    openTab(event, 'MapaActual'); // Abre la pestaña de Mapa Actual
+});
+
+
+// Abre la pestaña seleccionada
+function openTab(evt, tabName) {
+    const tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none"; // Oculta todo el contenido de las tabs
     }
 
-    // Función para convertir UTC a la hora local
-    function convertToLocalTime(utcDateString) {
-        const localDate = new Date(utcDateString);
-        const options = {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-            timeZone: 'UTC'
-        };
-
-        const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(localDate);
-        return formattedDate;
+    const tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", ""); // Elimina la clase "active" de todas las tabs
     }
 
-    // Actualiza la ubicación cada 10 segundos
-    setInterval(fetchLatestLocation, 10000);
+    document.getElementById(tabName).style.display = "block"; // Muestra la pestaña seleccionada
+    evt.currentTarget.className += " active"; // Añade la clase "active" al botón clicado
+}
 
-    // Evento para cambiar a la pestaña de datos históricos
-    document.getElementById('historicalDataBtn').addEventListener('click', (event) => {
-        openTab(event, 'Historico'); // Abre la pestaña de Datos Históricos
-    });
+// Cargar el mapa histórico
+function loadHistoricalMap() {
+    const script = document.createElement('script');
+    script.src = 'script2.js'; // Ruta del script2.js
+    document.head.appendChild(script);
+}
 
-    // Evento para cambiar a la pestaña de mapa actual
-    document.getElementById('realtimeBtn').addEventListener('click', (event) => {
-        openTab(event, 'MapaActual'); // Abre la pestaña de Mapa Actual
-    });
 
-    // Función para alternar entre pestañas
-    function openTab(evt, tabName) {
-        const tabcontent = document.getElementsByClassName("tabcontent");
-        for (let i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none"; // Oculta todo el contenido de las tabs
-        }
-
-        const tablinks = document.getElementsByClassName("tablinks");
-        for (let i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", ""); // Elimina la clase "active" de todas las tabs
-        }
-
-        document.getElementById(tabName).style.display = "block"; // Muestra la pestaña seleccionada
-        evt.currentTarget.className += " active"; // Añade la clase "active" al botón clicado
-    }
-
-    // Por defecto, abre la pestaña del Mapa Actual al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementsByClassName('tablinks')[0].click();
-    })
+// Carga el mapa en tiempo real al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    loadMap();
+    document.getElementsByClassName('tablinks')[0].click(); // Abre la pestaña del Mapa Actual por defecto
+});
