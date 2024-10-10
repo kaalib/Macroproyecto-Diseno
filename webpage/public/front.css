@@ -3,79 +3,113 @@
 html, body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Evita desplazamiento horizontal */
-    }
+    overflow-x: hidden;
+    font-family: 'Roboto', sans-serif;
+}
 
-    header {
-        background-color: #6F2F9E; /* Fondo morado */
-        display: flex;
-        justify-content: center;
-        align-items: center; /* Alinea el contenido verticalmente */
-        padding: 40px 20px; 
-        position: sticky;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        height: 30px;
-    }
-    
-    header h1 {
-        font-size: 60px; /* Tamaño del texto */
-        font-weight: bold;
-        color: #FFFFFF; /* Color blanco */
-        margin: 0;
-        text-align: center;
-        text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-        font-family: 'Arial', sans-serif;
-    }
-    
-
-    .container {
+header {
+    background-color: #6F2F9E;
     display: flex;
-    justify-content: space-between;
-    width: 80%;
-    margin: 40px auto; /* to ensure distance between header and body */
-    }
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    /* Estilo para el contenedor de datos */
-    .data-container {
-        display: flex; /* Organiza los elementos en fila */
-        justify-content: center; /* Centra los elementos */
-        align-items: center; /* Alinea verticalmente los elementos */
-        margin: 20px 0; /* Margen superior e inferior */
-    }
+header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #FFFFFF;
+    margin: 0;
+    text-align: center;
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: 'Arial', sans-serif;
+}
 
-    /* Estilo para cada dato */
+.data-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.data {
+    flex: 1 1 200px;
+    color: #000000;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #6F2F9E;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#historicalDataBtn {
+    flex: 0 1 auto;
+    padding: 10px 20px;
+    background-color: #6F2F9E;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 20px;
+}
+
+#historicalDataBtn:hover {
+    background-color: #5A228A;
+}
+
+#map {
+    height: 500px;
+    max-width: 1200px;
+    width: 100%;
+    border-radius: 15px;
+    margin: 20px auto;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
     .data {
-        margin: 0 15px; /* Espaciado horizontal entre los datos */
-        color: #000000; /* Color del texto */
-        text-align: center; /* Centra el texto */
-        padding: 20px; /* Espaciado interno */
-        background-color: #f9f9f9; /* Color de fondo del cuadrito */
-        border: 1px solid #6F2F9E; /* Borde del cuadrito */
-        border-radius: 10px; /* Bordes redondeados */
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
-        font-family: 'Roboto', sans-serif; /* Fuente más bonita */
+        flex-basis: 100%;
     }
- 
-    #historicalDataBtn{
-        margin-left: 20px; /* Espacio entre los datos y el botón */
-        padding: 10px 20px; /* Espaciado interno del botón */
-        background-color: #6F2F9E; /* Color de fondo del botón */
-        color: #FFFFFF; /* Color del texto del botón */
-        border: none; /* Sin borde */
-        border-radius: 5px; /* Bordes redondeados */
-        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    }
-
-    #historicalDataBtn:hover {
-        background-color: #5A228A; /* Color más oscuro al pasar el mouse */
-    }
-
+    
     #map {
-        height: 500px; /* Altura del mapa */
-        width: 100%; /* Ancho del mapa */
-        border-radius: 15px; /* Bordes redondeados */
-        margin-top: 20px; /* Espacio superior entre los datos y el mapa */
+        height: 300px;
     }
+
+    #historicalDataBtn {
+        flex-basis: auto;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .data-container {
+        padding: 10px;
+    }
+    
+    .data {
+        padding: 15px;
+    }
+
+    #historicalDataBtn {
+        width: 100%;
+    }
+}
