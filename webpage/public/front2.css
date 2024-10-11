@@ -14,28 +14,25 @@
 
 
     header {
-        background-color: #6F2F9E; /* Fondo morado */
+        background-color: #6F2F9E;
         display: flex;
         justify-content: center;
-        align-items: center; /* Alinea el contenido verticalmente */
-        padding: 40px 20px; 
+        align-items: center;
+        padding: 20px;
         position: sticky;
         top: 0;
         width: 100%;
         z-index: 1000;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        height: 30px;
-        margin-bottom: 20px; 
-        margin-top: 0px;
     }
 
     header h1 {
-        font-size: 60px; /* Tamaño del texto */
+        font-size: 2.5rem;
         font-weight: bold;
-        color: #FFFFFF; /* Color blanco */
+        color: #FFFFFF;
         margin: 0;
         text-align: center;
-        text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+        text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
         font-family: 'Arial', sans-serif;
     }
 
@@ -107,6 +104,18 @@
 
     
     #toggleSearch {
+        margin-left: 15px; /* Espacio entre los datos y el botón */
+        margin-right: 15px;
+        padding: 10px 15px; /* Espaciado interno del botón */
+        background-color: #6F2F9E; /* Color de fondo del botón */
+        color: #FFFFFF; /* Color del texto del botón */
+        border: none; /* Sin borde */
+        border-radius: 3px; /* Bordes redondeados */
+        cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+        transition: background-color 0.3s; /* Transición suave al pasar el mouse */
+    }
+
+    #realtimeBtn {
         margin-left: 15px; /* Espacio entre los datos y el botón */
         margin-right: 15px;
         padding: 10px 15px; /* Espaciado interno del botón */
