@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const app = express();
 const axios = require('axios'); 
 const port = 80; 
-
+ 
 const DDNS_HOST = process.env.DDNS_HOST;
 
 const pool = mysql.createPool({
