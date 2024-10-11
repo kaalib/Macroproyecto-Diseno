@@ -100,26 +100,33 @@ app.get('/geocode', async (req, res) => {
     }
 });
 
-app.get('/nearby', (req, res) => {
-    const { lat, lng, radius = 500 } = req.query; 
+app.get('/nearbyhistorics', (req, res) => {
+    const { lat, lng, radius = 500, startDate, endDate } = req.query;
 
-    if (!lat || !lng) {
-        return res.status(400).json({ error: 'Lat and Lng parameters are required' });
+    // Validar que se han proporcionado lat, lng, startDate y endDate
+    if (!lat || !lng || !startDate || !endDate) {
+        return res.status(400).json({ error: 'Lat, Lng, startDate y endDate son parámetros requeridos.' });
     }
 
+    // Consulta SQL para filtrar por ubicación (usando el radio) y por rango de fechas
     const query = `
         SELECT *, 
         (6371000 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(longitude) - radians(${lng})) + sin(radians(${lat})) * sin(radians(latitude)))) AS distance
         FROM coordinates
+        WHERE timestamp BETWEEN '${startDate}' AND '${endDate}'
         HAVING distance < ${radius}
         ORDER BY timestamp;
     `;
 
     pool.query(query, (err, results) => {
-        if (err) throw err;
+        if (err) {
+            console.error('Error ejecutando la consulta:', err);
+            return res.status(500).json({ error: 'Error al ejecutar la consulta' });
+        }
         res.json(results);
     });
 });
+
 
 app.listen(port, () => {
     console.log(`Server running on http://${DDNS_HOST}`);
