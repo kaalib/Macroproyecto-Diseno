@@ -45,8 +45,6 @@ async function initMap() {
 
     const initialPosition = { lat: 0, lng: 0 };
 
-    clearMap(); // Limpiar el mapa anterior antes de inicializar
-
     map = new Map(document.getElementById("map"), {
         zoom: 14,
         center: initialPosition,
