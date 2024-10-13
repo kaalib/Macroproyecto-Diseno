@@ -1,71 +1,97 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+body {
     font-family: 'Roboto', sans-serif;
 }
 
-header {
-    background-color: #6F2F9E;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+.logo-image {
+    height: 40px;
+    width: auto;
 }
 
-header h1 {
+.logo-text {
+    font-family: 'Roboto', sans-serif;
     font-size: 2.5rem;
-    font-weight: bold;
-    color: #FFFFFF;
-    margin: 0;
-    text-align: center;
-    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
-    font-family: 'Arial', sans-serif;
-}
-
-.data-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 40px auto;
+    font-weight: 700;
+    color: #8E44AD;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 
+        1px 1px 0px #7D3C98,
+        2px 2px 0px rgba(0,0,0,0.1);
+    background: linear-gradient(to bottom, #9B59B6, #8E44AD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
 }
 
 .data {
-    flex: 1 1 200px;
     color: #000000;
     text-align: center;
-    padding: 20px;
+    padding: 8px;
     background-color: #f9f9f9;
     border: 1px solid #6F2F9E;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 0.85rem;
 }
 
-#historicalDataBtn {
-    flex: 0 1 auto;
-    padding: 10px 20px;
+.btn-primary, .btn-secondary, #realtimeBtn {
     background-color: #6F2F9E;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-left: 20px;
+    border-color: #6F2F9E;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
 }
 
-#historicalDataBtn:hover {
+.btn-primary:hover, .btn-secondary:hover, #realtimeBtn:hover {
     background-color: #5A228A;
+    border-color: #5A228A;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#gethistorical, #realtimeBtn {
+    min-width: 100px;
+}
+
+#clearAddress {
+    cursor: pointer;
+    color: #999;
+    font-size: 16px;
+}
+
+#clearAddress:hover {
+    color: #6F2F9E;
+}
+
+.input-error {
+    border: 1px solid red;
+}
+
+.historical-card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.historical-card .card-body {
+    padding: 0.5rem;
+}
+
+.small-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.1rem;
+}
+
+.form-control-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+    height: calc(1.5em + 0.4rem + 2px);
+}
+
+#historicalControls .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
 }
 
 #map {
@@ -77,159 +103,34 @@ header h1 {
 }
 
 @media (max-width: 768px) {
-    header h1 {
+    .logo-text {
         font-size: 2rem;
     }
     
-    .data {
-        flex-basis: 100%;
+    .logo-image {
+        height: 30px;
+    }
+
+    #historicalControls .col-md-6 {
+        margin-bottom: 5px;
+    }
+    
+    #gethistorical, #realtimeBtn {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
     }
     
     #map {
         height: 300px;
     }
-
-    #historicalDataBtn {
-        flex-basis: auto;
-        margin-left: 0;
-        margin-top: 20px;
-    }
 }
 
 @media (max-width: 480px) {
-    header h1 {
-        font-size: 1.5rem;
+    .logo-text {
+        font-size: 1.8rem;
     }
     
-    .data-container {
-        padding: 10px;
+    .logo-image {
+        height: 25px;
     }
-    
-    .data {
-        padding: 15px;
-    }
-
-    #historicalDataBtn {
-        width: 100%;
-    }
-}
-
-#searchbyaddress {
-    margin-left: 20px; /* Espacio entre los datos y el botón */
-    padding: 10px 20px; /* Espaciado interno del botón */
-    background-color: #6F2F9E; /* Color de fondo del botón */
-    color: #FFFFFF; /* Color del texto del botón */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Transición suave al pasar el mouse */
-}
-
-#searchbyaddress :hover {
-    background-color: #5A228A; /* Color más oscuro al pasar el mouse */
-}
-
-
-#gethistorical {
-    margin-left: 15px; /* Espacio entre los datos y el botón */
-    margin-right: 15px;
-    padding: 10px 15px; /* Espaciado interno del botón */
-    background-color: #6F2F9E; /* Color de fondo del botón */
-    color: #FFFFFF; /* Color del texto del botón */
-    border: none; /* Sin borde */
-    border-radius: 3px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Transición suave al pasar el mouse */
-}
-
-
-#gethistorical:hover {
-    background-color: #5A228A; /* Color más oscuro al pasar el mouse */
-}
-
-.controls {
-    margin-bottom: 20px; /* Espacio inferior */
-    margin-left: 10px;
-    display: flex; /* Organiza los elementos en fila */
-    align-items: center; /* Alinea verticalmente los elementos */
-    
-}
-
-.control-group,
-.address-group {
-    margin-right: 15px; /* Espaciado entre grupos de control */
-    padding: 10px; /* Espaciado interno para cada grupo */
-    background-color: #ffffff; /* Color de fondo blanco para los grupos */
-    border: 1px solid #6F2F9E; /* Borde del grupo */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
-    display: flex; /* Organiza los elementos en fila */
-    align-items: center; /* Alinea verticalmente los elementos */
-    font-family: 'Roboto', sans-serif; /* Fuente más bonita */
-    margin-right: 15px; /* Espaciado a la derecha */
-   
-}
-
-#address {
-    margin-right: 15px; /* Espaciado a la derecha */
-    margin-left: 10px; /* Espaciado a la izquierda */
-    padding: 8px; /* Espaciado interno para el input */
-    border: 1px solid #ccc; /* Borde gris para el input */
-    border-radius: 5px; /* Bordes redondeados para el input */
-    font-family: 'Roboto', sans-serif; /* Fuente para el input */
-    width: 300px;
-}
-
-
-#toggleSearch {
-    margin-left: 15px; /* Espacio entre los datos y el botón */
-    margin-right: 15px;
-    padding: 10px 15px; /* Espaciado interno del botón */
-    background-color: #6F2F9E; /* Color de fondo del botón */
-    color: #FFFFFF; /* Color del texto del botón */
-    border: none; /* Sin borde */
-    border-radius: 3px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Transición suave al pasar el mouse */
-}
-
-#realtimeBtn {
-    margin-left: 15px; /* Espacio entre los datos y el botón */
-    margin-right: 15px;
-    padding: 10px 15px; /* Espaciado interno del botón */
-    background-color: #6F2F9E; /* Color de fondo del botón */
-    color: #FFFFFF; /* Color del texto del botón */
-    border: none; /* Sin borde */
-    border-radius: 3px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Transición suave al pasar el mouse */
-}
-
-#clearAddress {
-    cursor: pointer;
-    display: none;
-    margin-right: 10px;
-    color: #999;
-    font-size: 24px;
-}
-
-#clearAddress:hover {
-    color: #6F2F9E;
-}
-#addressInputContainer {
-    position: relative;
-}
-
-#radiusInputContainer {
-    margin-top: 10px;
-    margin-left: 15px;
-    
-}
-#radiusInputContainer label {
-    font-size: 14px; /* Ajusta el tamaño según sea necesario */
-    font-family: 'Roboto', sans-serif; /* Fuente para el input */    
-}
-
-.input-error {
-    border: 2px solid red; /* Borde rojo */
 }
