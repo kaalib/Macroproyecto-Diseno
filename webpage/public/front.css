@@ -6,25 +6,10 @@ body {
 }
 
 .logo-image {
-    height: 40px;
+    height: 100px;
     width: auto;
 }
 
-.logo-text {
-    font-family: 'Roboto', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #8E44AD;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 
-        1px 1px 0px #7D3C98,
-        2px 2px 0px rgba(0,0,0,0.1);
-    background: linear-gradient(to bottom, #9B59B6, #8E44AD);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    white-space: nowrap;
-}
 
 .data {
     color: #000000;
