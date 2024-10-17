@@ -62,9 +62,8 @@
                                         <input type="text" id="endDate" class="form-control form-control-sm" required>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <button id="gethistorical" class="btn btn-primary btn-sm flex-grow-1 me-1">Get Historical</button>
-                                    <button id="realtimeBtn" class="btn btn-primary btn-sm flex-grow-1">Get Real Time Data</button>
+                                <div class="d-flex justify-content-center mt-1">
+                                    <button id="gethistorical" class="btn btn-primary btn-sm">Get Historical</button>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -80,21 +79,25 @@
                                         <input type="number" id="radius" class="form-control form-control-sm" min="1" placeholder="Radius (m)">
                                     </div>
                                     <div class="col-4">
-                                        <button id="searchbyaddress" class="btn btn-primary btn-sm w-100">Search by address</button>
+                                        <button id="searchbyaddress" class="btn btn-primary btn-sm w-100">Search by location</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-1">
+                        <div class="row mt-3">
                             <div class="col-12">
-                                <input type="range" id="marker-slider" class="form-range" min="0" max="100" value="0" style="display:none;">
+                                <label for="marker-slider" class="form-label">Historic route</label>
+                                <input type="range" id="marker-slider" class="form-range custom-range" min="0" max="100" value="0">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-12 text-center">
+                <button id="realtimeBtn" class="btn btn-primary btn-sm flex-grow-1">Main Page</button>
+            </div>
         </div>
-
+ 
         <div class="row mt-3">
             <div class="col-12">
                 <div id="map" style="height: 500px;"></div>

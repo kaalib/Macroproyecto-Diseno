@@ -120,7 +120,7 @@ async function initHistoricalMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    const initialPosition = { lat: 0, lng: 0 };
+    const initialPosition = { lat: 10.983831, lng: -74.802631 };
 
     map = new Map(document.getElementById("map"), {
         zoom: 14,
