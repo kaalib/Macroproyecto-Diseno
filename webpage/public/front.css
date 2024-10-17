@@ -6,7 +6,7 @@ body {
 }
 
 .logo-image {
-    height: 100px;
+    height: 60px;
     width: auto;
 }
 
@@ -30,11 +30,19 @@ body {
     padding: 0.25rem 0.5rem;
 }
 
+#realtimeBtn{
+    margin-top: 25px;
+}
+
 .btn-primary:hover, .btn-secondary:hover, #realtimeBtn:hover {
     background-color: #5A228A;
     border-color: #5A228A;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#gethistorical {
+    text-align: center;
+    min-width: 120px; /* Ajusta este valor según tus necesidades */
 }
 
 #gethistorical, #realtimeBtn {
@@ -118,4 +126,72 @@ body {
     .logo-image {
         height: 25px;
     }
+}
+
+.custom-range {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #e0e0e0;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.custom-range:hover {
+    opacity: 1;
+}
+
+.custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6F2F9E;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.custom-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6F2F9E;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.custom-range::-ms-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6F2F9E;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.custom-range::-webkit-slider-thumb:hover {
+    background: #5A228A;
+    box-shadow: 0 0 0 3px rgba(111, 47, 158, 0.2);
+}
+
+.custom-range::-moz-range-thumb:hover {
+    background: #5A228A;
+    box-shadow: 0 0 0 3px rgba(111, 47, 158, 0.2);
+}
+
+.custom-range::-ms-thumb:hover {
+    background: #5A228A;
+    box-shadow: 0 0 0 3px rgba(111, 47, 158, 0.2);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: block;
 }
