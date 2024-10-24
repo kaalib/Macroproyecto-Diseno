@@ -1,5 +1,6 @@
 let map;
 let marker;
+
 let polyline;
 let path = [];
 let polylines = [];
@@ -209,33 +210,49 @@ function updateMapAndRouteHistorics(lat, lng, timestamp) {
     }
 }
 
+function calculateBearing(start, end) {
+    const lat1 = (start.lat * Math.PI) / 180;
+    const lon1 = (start.lng * Math.PI) / 180;
+    const lat2 = (end.lat * Math.PI) / 180;
+    const lon2 = (end.lng * Math.PI) / 180;
+
+    const dLon = lon2 - lon1;
+    const y = Math.sin(dLon) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+    const bearing = (Math.atan2(y, x) * 180) / Math.PI;
+    return (bearing + 360) % 360; // Convertir a ángulo positivo
+}
+
 function drawPolylineHistorics(origin, destination, timestamp) {
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
 
+    // Calcular la rotación de la flecha
+    const bearing = calculateBearing(origin, destination);
+
     const startMarker = new google.maps.Marker({
         position: origin,
         map: map,
         title: "Inicio",
         icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 6,
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Cambiar a flecha
+            scale: 3,
             fillColor: '#6F2F9E',
             fillOpacity: 1,
-            strokeWeight: 2
+            strokeWeight: 2,
+            rotation: bearing // Ajustar la rotación de la flecha según el ángulo calculado
         }
     });
 
     markers.push(startMarker);
 
-    // Ajusta la fecha y hora según la zona horaria antes de usarla
     const adjustedTimestamp = adjustForTimezone(timestamp);
-    
+
     const infoWindow = new google.maps.InfoWindow({
-        content: `<div><strong>Registered Date</strong><br> ${adjustedTimestamp}</div>`, 
-        maxWidth: 200 
+        content: `<div><strong>Registered Date</strong><br> ${adjustedTimestamp}</div>`,
+        maxWidth: 200
     });
 
     infoWindows.push(infoWindow);
@@ -244,16 +261,14 @@ function drawPolylineHistorics(origin, destination, timestamp) {
         infoWindow.open(map, startMarker);
     });
 
-        // Activar el InfoWindow al pasar el mouse por encima
     startMarker.addListener('mouseover', function() {
         infoWindow.open(map, startMarker);
     });
 
-    // Cerrar el InfoWindow al mover el mouse fuera del marcador
     startMarker.addListener('mouseout', function() {
         infoWindow.close();
     });
-    
+
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
@@ -266,6 +281,7 @@ function drawPolylineHistorics(origin, destination, timestamp) {
     polylines.push(polyline);
     console.log("Polyline drawn successfully");
 }
+
 
 function convertToGlobalTime(localTime) {
     const utcDate = new Date(localTime);
@@ -379,6 +395,7 @@ function validarFechas() {
 }
 
 document.getElementById('gethistorical').addEventListener('click', () => {
+
     let startDate = document.getElementById('startDate');
     let endDate = document.getElementById('endDate');
 
@@ -428,6 +445,7 @@ document.getElementById('gethistorical').addEventListener('click', () => {
                 } else {
                     data.forEach(data => {
                         updateMapAndRouteHistorics(data.latitude, data.longitude, data.timestamp);
+                        document.getElementById('Searchsection').style.display='block';
                     });
                     setupSlider(data.length);
                 }
@@ -517,6 +535,7 @@ document.getElementById('searchbyaddress').addEventListener('click', () => {
                             } else {
                                 data.forEach(item => {
                                     updateMapAndRouteHistorics(item.latitude, item.longitude, item.timestamp);
+                                    document.getElementById('slider').style.display ='block';
                                 });
                                 setupSlider(data.length);
                             }
