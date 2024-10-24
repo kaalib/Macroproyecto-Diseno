@@ -66,7 +66,7 @@
                                     <button id="gethistorical" class="btn btn-primary btn-sm">Get Historical</button>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 " id="Searchsection" style= "display: none;" >
                                 <div class="mb-1">
                                     <label for="address" class="form-label small-label">Enter a location:</label>
                                     <div class="input-group input-group-sm">
@@ -76,18 +76,18 @@
                                 </div>
                                 <div class="row g-1">
                                     <div class="col-8">
-                                        <input type="number" id="radius" class="form-control form-control-sm" min="1" placeholder="Radius (m)">
+                                        <input type="number" id="radius" class="form-control form-control-sm" min="1" placeholder="Radius (500m default)">
                                     </div>
                                     <div class="col-4">
                                         <button id="searchbyaddress" class="btn btn-primary btn-sm w-100">Search by location</button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <label for="marker-slider" class="form-label">Historic route</label>
-                                <input type="range" id="marker-slider" class="form-range custom-range" min="0" max="100" value="0">
+                                <div class="row mt-3" id="slider" style="display:none;">
+                                    <div class="col-12">    
+                                        <label for="marker-slider" class="form-label"> &larr; Historic route &rarr; </label>
+                                        <input type="range" id="marker-slider" class="form-range custom-range" min="0" max="100" value="0">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
