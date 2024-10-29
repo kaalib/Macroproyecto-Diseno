@@ -45,7 +45,7 @@ function fetchDataFromDatabase() {
 
 // Función para obtener datos de OBD de la base de datos 
 function fetchObdDataFromDatabase() {
-    pool.query('SELECT rpm, speed FROM OBD ORDER BY id DESC LIMIT 1', (err, results) => {
+    pool.query('SELECT rpm, speed FROM OBD LIMIT 1', (err, results) => {
         if (err) {
             console.error('Error fetching OBD data:', err);
             return;
