@@ -25,7 +25,6 @@ while True:
     print(f"Datos recibidos: {data.decode()} desde {addr}")
 
     try:
-        # Descomponer los datos recibidos
         data_values = data.decode().split(',')
 
         if len(data_values) >= 3:  # Verificar que haya al menos latitud, longitud y timestamp
@@ -37,16 +36,16 @@ while True:
             sql = "INSERT INTO coordinates (latitude, longitude, timestamp) VALUES (%s, %s, %s)"
             cursor.execute(sql, (latitude, longitude, timestamp))
             print(f"Datos insertados en coordinates: latitud={latitude}, longitud={longitude}, timestamp={timestamp}")
-        
+
         if len(data_values) >= 5:  # Verificar que haya rpm y speed
             rpm, speed = data_values[3:5]
             rpm = float(rpm)
             speed = float(speed)
 
-            # Insertar en la tabla OBD
-            sql = "INSERT INTO OBD (rpm, speed) VALUES (%s, %s)"
-            cursor.execute(sql, (rpm, speed))
-            print(f"Datos insertados en OBD: rpm={rpm}, speed={speed}")
+            # Insertar en la tabla OBD usando el mismo timestamp de coordinates
+            sql = "INSERT INTO OBD (rpm, speed, timestamp) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (rpm, speed, timestamp))
+            print(f"Datos insertados en OBD: rpm={rpm}, speed={speed}, timestamp={timestamp}")
 
         # Guardar los cambios en la base de datos
         db.commit()
