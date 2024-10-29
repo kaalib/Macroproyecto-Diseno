@@ -25,22 +25,35 @@ while True:
     print(f"Datos recibidos: {data.decode()} desde {addr}")
 
     try:
-        latitude, longitude, timestamp = data.decode().split(',')
-        latitude = float(latitude)
-        longitude = float(longitude)
+        # Descomponer los datos recibidos
+        data_values = data.decode().split(',')
 
-        # Consulta SQL para actualizar la tabla coordinates
-        sql = "INSERT INTO coordinates (latitude, longitude, timestamp) VALUES (%s, %s, %s)"
-        cursor.execute(sql, (latitude, longitude, timestamp))
+        if len(data_values) >= 3:  # Verificar que haya al menos latitud, longitud y timestamp
+            latitude, longitude, timestamp = data_values[:3]
+            latitude = float(latitude)
+            longitude = float(longitude)
+
+            # Insertar en la tabla coordinates
+            sql = "INSERT INTO coordinates (latitude, longitude, timestamp) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (latitude, longitude, timestamp))
+            print(f"Datos insertados en coordinates: latitud={latitude}, longitud={longitude}, timestamp={timestamp}")
         
+        if len(data_values) >= 5:  # Verificar que haya rpm y speed
+            rpm, speed = data_values[3:5]
+            rpm = float(rpm)
+            speed = float(speed)
+
+            # Insertar en la tabla OBD
+            sql = "INSERT INTO OBD (rpm, speed) VALUES (%s, %s)"
+            cursor.execute(sql, (rpm, speed))
+            print(f"Datos insertados en OBD: rpm={rpm}, speed={speed}")
+
         # Guardar los cambios en la base de datos
         db.commit()
 
-        print(f"Datos insertados en la base de datos: {latitude}, {longitude}, {timestamp}")
-
     except Exception as e:
         print(f"Error al procesar los datos: {e}")
-        db.rollback() 
-        
+        db.rollback()
+
 cursor.close()
 db.close()
