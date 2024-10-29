@@ -14,14 +14,13 @@ body {
 .data {
     color: #000000;
     text-align: center;
-    padding: 7px;
+    padding: 8px;
     background-color: #f9f9f9;
     border: 1px solid #6F2F9E;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
     font-size: 0.85rem;
 }
-
 
 .btn-primary, .btn-secondary, #realtimeBtn {
     background-color: #6F2F9E;
