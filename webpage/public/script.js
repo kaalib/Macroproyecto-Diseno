@@ -111,8 +111,27 @@ function convertToLocalTime(utcDateString) {
     return formattedDate;
 }
 
+// Función para obtener datos OBD 
+function fetchObdData() {
+    fetch('/obd_data')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('rpm').innerText = data.rpm !== 'N/A' ? data.rpm.toFixed(2) : 'N/A';
+            document.getElementById('speed').innerText = data.speed !== 'N/A' ? data.speed.toFixed(2) : 'N/A';
+        })
+        .catch(err => console.error('Error fetching OBD data:', err));
+}
+
+
+
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
+
+// Actualiza los datos de OBD cada 10 segundos
+setInterval(fetchObdData, 10000);
+
+
+
 
 //--------------------------------HISTORICAL--------------------------------------------
 async function initHistoricalMap() {
