@@ -35,9 +35,10 @@ function initMap() {
     });
     initAutocomplete();
     fetchLatestLocation(); // Llama a la función que obtiene la ubicación
+    fetchObdData(); // Llama a la función que obtiene los datos OBD
 }
 
-// Función para redondear a 3 decimales
+// Función para redondear a 6 decimales
 function roundToThreeDecimals(num) {
     return Number(num.toFixed(6));
 }
@@ -111,8 +112,25 @@ function convertToLocalTime(utcDateString) {
     return formattedDate;
 }
 
+// Función para obtener datos OBD y actualizarlos en la interfaz
+function fetchObdData() {
+    fetch('/obd_data')
+        .then(response => response.json())
+        .then(data => {
+            // Verifica que el dato sea un número antes de aplicar toFixed
+            document.getElementById('rpm').innerText = typeof data.rpm === 'number' ? data.rpm.toFixed(2) : 'N/A';
+            document.getElementById('speed').innerText = typeof data.speed === 'number' ? data.speed.toFixed(2) : 'N/A';
+        })
+        .catch(err => console.error('Error fetching OBD data:', err));
+}
+
+
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
+
+
+// Actualiza los datos de OBD cada 10 segundos
+setInterval(fetchObdData, 10000);
 
 //--------------------------------HISTORICAL--------------------------------------------
 async function initHistoricalMap() {
