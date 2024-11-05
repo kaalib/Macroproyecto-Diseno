@@ -52,9 +52,16 @@
                 </div>
             </div>
             <div class="col-12 text-center">
+                <div class="d-inline-block">
+                    <select id="vehicleDropdown" class="form-select form-select-sm" onchange="handleVehicleSelection()">
+                        <option value="all">Todos los vehículos</option>
+                        <option value="1">Vehículo 1</option>
+                        <option value="2">Vehículo 2</option>
+                    </select>
+                </div>
                 <button id="historicalDataBtn" class="btn btn-primary btn-sm">Get Historical Data</button>
             </div>
-        </div>
+            
 
         <!-- HISTORICAL -->
         <div class="row justify-content-center mt-3" id="historicalControls" style="display: none;">

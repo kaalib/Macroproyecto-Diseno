@@ -14,70 +14,41 @@ const pool = mysql.createPool({
     database: process.env.DB_DATABASE
 });
 
-let locationData = {
-    latitude: 'N/A',
-    longitude: 'N/A',
-    timestamp: 'N/A'
-};
+app.get('/latest-location', (req, res) => {
+    const { ID, allVehicles } = req.query;
+    let query;
 
-let obdData = {
-    rpm: 'N/A',
-    speed: 'N/A'
-};
+    if (allVehicles == 1) {
+        query = `(SELECT id, latitude, longitude, rpm, speed, timestamp FROM coordinates WHERE id = 1 ORDER BY timestamp DESC LIMIT 1)
+                  UNION ALL
+                  (SELECT id, latitude, longitude, rpm, speed, timestamp FROM coordinates WHERE id = 2 ORDER BY timestamp DESC LIMIT 1);`;
 
-// Función para obtener datos de la base de datos
-function fetchDataFromDatabase() {
-    pool.query('SELECT latitude, longitude, timestamp FROM coordinates ORDER BY timestamp DESC LIMIT 1', (err, results) => {
-        if (err) {
-            console.error('Error fetching data:', err);
-            return;
-        }
-        if (results.length > 0) {
-            const row = results[0];
-            locationData = {
-                latitude: row.latitude,
-                longitude: row.longitude,
-                timestamp: row.timestamp
-            };
-        }
-    });
-}
-
-// Función para obtener datos de OBD de la base de datos 
-function fetchObdDataFromDatabase() {
-    pool.query('SELECT rpm, speed FROM OBD ORDER BY timestamp DESC LIMIT 1', (err, results) => {
-        if (err) {
-            console.error('Error fetching OBD data:', err);
-            return;
-        }
-        if (results.length > 0) {
-            const row = results[0];
-            obdData = {
-                rpm: row.rpm,
-                speed: row.speed
-            };
-        }
-    });
-}
-
-
-
-// Llama a la función cada 8 segundos
-setInterval(fetchDataFromDatabase, 8000);
-setInterval(fetchObdDataFromDatabase, 8000);
+        pool.query(query, (err, results) => {
+            if (err) {
+                console.error('Error ejecutando la consulta:', err);
+                res.status(500).json({ error: 'Error al obtener los datos' });
+                return;
+            }
+            res.json(results);
+        });
+    } else {
+        query = `SELECT id, latitude, longitude, rpm, speed, timestamp FROM coordinates WHERE id = ${ID} ORDER BY timestamp DESC LIMIT 1`;
+        
+        pool.query(query, (err, results) => {
+            if (err) {
+                console.error('Error ejecutando la consulta:', err);
+                res.status(500).json({ error: 'Error al obtener los datos' });
+                return;
+            }
+            res.json(results[0]);
+        });
+    }
+});
 
 
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/data', (req, res) => {
-    res.json(locationData);
-});
-
-// Endpoint OBD data
-app.get('/obd_data', (req, res) => {
-    res.json(obdData);
-});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
