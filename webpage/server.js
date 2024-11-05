@@ -91,7 +91,10 @@ setInterval(fetchDataFromDatabase, 8000);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/data', (req, res) => {
-    res.json(locationData);
+    res.json({
+        vehicle1: locationData1,
+        vehicle2: locationData2
+    });
 });
 
 
