@@ -63,13 +63,13 @@ function fetchLatestLocation() {
     fetch('/data')
         .then(response => response.json())
         .then(data => {
-            const roundedLat = roundToThreeDecimals(data.latitude);
-            const roundedLng = roundToThreeDecimals(data.longitude);
+            const roundedLat = roundToThreeDecimals(data.locationData.latitude);
+            const roundedLng = roundToThreeDecimals(data.locationData.longitude);
 
             document.getElementById('latitude').innerText = roundedLat;
             document.getElementById('longitude').innerText = roundedLng;
 
-            const timestamp = convertToLocalTime(data.timestamp);
+            const timestamp = convertToLocalTime(data.locationData.timestamp);
             const [date, time] = timestamp.split(', ');
             document.getElementById('date').innerText = date;
             document.getElementById('time').innerText = time;
@@ -82,6 +82,7 @@ function fetchLatestLocation() {
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
+ 
 
 // Función para reactivar fetchLatestLocation
 function activateFetchLatestLocation() {
