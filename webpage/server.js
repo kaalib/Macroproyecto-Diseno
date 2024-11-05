@@ -1,70 +1,90 @@
-const express = require('express');
-const path = require('path');
-const mysql = require('mysql2');
-const app = express();
-const axios = require('axios'); 
-const port = 80; 
+        const express = require('express');
+        const path = require('path');
+        const mysql = require('mysql2');
+        const app = express();
+        const axios = require('axios'); 
+        const port = 80; 
 
-const DDNS_HOST = process.env.DDNS_HOST;
+        const DDNS_HOST = process.env.DDNS_HOST;
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
-});
+        const pool = mysql.createPool({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE
+        });
 
-let locationData = {
-    latitude: 'N/A',
-    longitude: 'N/A',
-    timestamp: 'N/A'
-};
+        let locationData1 = {
+            latitude: 'N/A',
+            longitude: 'N/A',
+            timestamp: 'N/A'
+        };
 
-let obdData = {
-    rpm: 'N/A',
-    speed: 'N/A'
-};
+        let locationData2 = {
+            latitude: 'N/A',
+            longitude: 'N/A',
+            timestamp: 'N/A'
+        };
 
-// Función para obtener datos de la base de datos
-function fetchDataFromDatabase() {
-    pool.query('SELECT latitude, longitude, timestamp FROM coordinates ORDER BY timestamp DESC LIMIT 1', (err, results) => {
-        if (err) {
-            console.error('Error fetching data:', err);
-            return;
+
+
+        // Función para obtener datos de la base de datos para dos vehículos
+        function fetchDataFromDatabase() {
+            pool.query(
+                            `(SELECT * 
+                    FROM coordinates 
+                    WHERE ID = 1 
+                    ORDER BY Timestamp DESC 
+                    LIMIT 1)
+                    UNION ALL
+                    (SELECT * 
+                    FROM coordinates 
+                    WHERE ID = 2 
+                    ORDER BY timestamp DESC 
+                    LIMIT 1);`,
+                (err, results) => {
+                    if (err) {
+                        console.error('Error fetching data:', err);
+                        return;
+                    }
+                    if (results.length > 0) {
+                        // Inicializa las variables para almacenar datos de ambos vehículos
+                        let locationData1 = null;
+                        let locationData2 = null;
+
+                        // Asigna datos de cada vehículo según el ID
+                        results.forEach(row => {
+                            if (row.id === 1) {
+                                locationData1 = {
+                                    latitude: row.latitude,
+                                    longitude: row.longitude,
+                                    timestamp: row.timestamp,
+                                    rpm: row.rpm,
+                                    speed: row.speed
+                                };
+                            } else if (row.id === 2) {
+                                locationData2 = {
+                                    latitude: row.latitude,
+                                    longitude: row.longitude,
+                                    timestamp: row.timestamp,
+                                    rpm: row.rpm,
+                                    speed: row.speed
+                                };
+                            }
+                        });
+
+                        // Usa locationData1 y locationData2 como necesites en el resto del código
+                        console.log('Location Data for Vehicle 1:', locationData1);
+                        console.log('Location Data for Vehicle 2:', locationData2);
+                    }
+                }
+            );
         }
-        if (results.length > 0) {
-            const row = results[0];
-            locationData = {
-                latitude: row.latitude,
-                longitude: row.longitude,
-                timestamp: row.timestamp
-            };
-        }
-    });
-}
-
-// Función para obtener datos de OBD de la base de datos 
-function fetchObdDataFromDatabase() {
-    pool.query('SELECT rpm, speed FROM OBD ORDER BY timestamp DESC LIMIT 1', (err, results) => {
-        if (err) {
-            console.error('Error fetching OBD data:', err);
-            return;
-        }
-        if (results.length > 0) {
-            const row = results[0];
-            obdData = {
-                rpm: row.rpm,
-                speed: row.speed
-            };
-        }
-    });
-}
-
 
 
 // Llama a la función cada 8 segundos
 setInterval(fetchDataFromDatabase, 8000);
-setInterval(fetchObdDataFromDatabase, 8000);
+
 
 
 
@@ -74,10 +94,6 @@ app.get('/data', (req, res) => {
     res.json(locationData);
 });
 
-// Endpoint OBD data
-app.get('/obd_data', (req, res) => {
-    res.json(obdData);
-});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
