@@ -55,21 +55,6 @@ body {
     font-size: 16px;
 }
 
-#vehicleDropdown {
-    min-width: 120px; /* Ajusta este valor según tus necesidades */
-    border: 1px solid #6F2F9E; /* Color de borde similar al de los botones */
-    border-radius: 8px; /* Bordes redondeados para un look más suave */
-    background-color: #f9f9f9; /* Color de fondo similar al del contenedor de datos */
-    color: #000; /* Color de texto */
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    transition: all 0.3s ease; /* Transiciones suaves */
-}
-
-#vehicleDropdown:hover {
-    border-color: #5A228A; /* Cambio de color en hover */
-}
-
-
 #clearAddress:hover {
     color: #6F2F9E;
 }
