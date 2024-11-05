@@ -1,51 +1,49 @@
 let map;
-let markers = [];
-let polylines = [];
-let paths = [];
-let currentID = null; // Variable para guardar el ID del vehículo seleccionado
-let shouldFetch = true;
+let marker;
 
-// Función para inicializar el mapa
+let polyline;
+let path = [];
+let polylines = [];
+let routeCoordinates = [];
+let lastTimestamp = null;
+let infoWindows = [];
+let markers = [];
+let results = []; 
+
+//REAL TIME MAP
 function initMap() {
+
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
         zoom: 14
     });
 
-    // Inicializar los marcadores para ambos carros (ID 1 y ID 2)
-    markers[1] = new google.maps.Marker({
+    marker = new google.maps.Marker({
         position: { lat: 0, lng: 0 },
-        map: map,
-        title: "Carro 1"
+        map: map
     });
 
-    markers[2] = new google.maps.Marker({
-        position: { lat: 0, lng: 0 },
-        map: map,
-        title: "Carro 2"
-    });
 
-    // Crear polilíneas para cada carro
-    polylines[1] = new google.maps.Polyline({
-        strokeColor: '#6F2F9E', // Color para el carro 1
+    // Inicializa la polilínea que seguirá la ruta personalizada
+    polyline = new google.maps.Polyline({
+        path: path,
+        strokeColor: '#6F2F9E', // Color morado
         strokeOpacity: 1.0,
         strokeWeight: 5,
         geodesic: true,
         map: map
     });
-
-    polylines[2] = new google.maps.Polyline({
-        strokeColor: '#FF5733', // Color para el carro 2
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-        geodesic: true,
-        map: map
-    });
-
     initAutocomplete();
     fetchLatestLocation(); // Llama a la función que obtiene la ubicación
+    fetchObdData(); // Llama a la función que obtiene los datos OBD
 }
 
+// Función para redondear a 6 decimales
+function roundToThreeDecimals(num) {
+    return Number(num.toFixed(6));
+}
+
+// Carga el mapa con la clave de la API de Google Maps
 function loadMap() {
     fetch('/api_key')
         .then(response => response.json())
@@ -59,85 +57,41 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
+let shouldFetch = true;
 
-// Función para obtener la última ubicación
 function fetchLatestLocation() {
     if (!shouldFetch) return;
-
-    // Endpoint actualizado para todos los vehículos o uno específico
-    const url = currentID ? `/latest-location?ID=${currentID}` : '/latest-location?allVehicles=1';
-
-    fetch(url)
+    fetch('/data')
         .then(response => response.json())
         .then(data => {
-            if (Array.isArray(data)) {
-                // Mostrar las rutas de todos los vehículos
-                data.forEach(carData => {
-                    updateCarRoute(carData.id, carData);
-                });
-            } else {
-                // Mostrar solo la ruta del vehículo específico
-                clearMap();
-                updateCarRoute(data.id, data);
-            }
+            const roundedLat = roundToThreeDecimals(data.latitude);
+            const roundedLng = roundToThreeDecimals(data.longitude);
+
+            document.getElementById('latitude').innerText = roundedLat;
+            document.getElementById('longitude').innerText = roundedLng;
+
+            const timestamp = convertToLocalTime(data.timestamp);
+            const [date, time] = timestamp.split(', ');
+            document.getElementById('date').innerText = date;
+            document.getElementById('time').innerText = time;
+
+            const latLng = new google.maps.LatLng(roundedLat, roundedLng);
+            map.setCenter(latLng);
+            marker.setPosition(latLng);
+
+            updateRoute(latLng);
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
 
-// Función para actualizar la ruta del vehículo
-function updateCarRoute(id, carData) {
-    const roundedLat = roundToThreeDecimals(carData.latitude);
-    const roundedLng = roundToThreeDecimals(carData.longitude);
-
-    document.getElementById('latitude').innerText = roundedLat;
-    document.getElementById('longitude').innerText = roundedLng;
-
-    const timestamp = convertToLocalTime(carData.timestamp);
-    const [date, time] = timestamp.split(', ');
-    document.getElementById('date').innerText = date;
-    document.getElementById('time').innerText = time;
-
-    const latLng = new google.maps.LatLng(roundedLat, roundedLng);
-
-    map.setCenter(latLng);
-    markers[id].setPosition(latLng);
-
-    if (!paths[id]) paths[id] = []; // Asegúrate de inicializar el array si no existe
-    paths[id].push(latLng); // Añade el nuevo punto al camino correspondiente
-    polylines[id].setPath(paths[id]); // Actualiza la polilínea correspondiente
+// Función para reactivar fetchLatestLocation
+function activateFetchLatestLocation() {
+    shouldFetch = true; 
 }
 
-// Función para limpiar el mapa
-function clearMap() {
-    paths[1] = [];
-    paths[2] = [];
-    polylines[1].setPath([]);
-    polylines[2].setPath([]);
-}
-
-// Función para manejar la selección del usuario en el dropdown
-function handleVehicleSelection() {
-    const dropdown = document.getElementById("vehicleDropdown");
-    const selectedValue = dropdown.value;
-
-    if (selectedValue === "all") {
-        selectVehicle(null); // Mostrar todos los vehículos
-    } else {
-        const vehicleID = parseInt(selectedValue); // Convertir a número
-        selectVehicle(vehicleID); // Mostrar solo el vehículo seleccionado
-    }
-}
-
-// Función para alternar entre todos los vehículos y un solo vehículo
-function selectVehicle(id) {
-    currentID = id; // Cambia el ID actual (null para todos los vehículos)
-    clearMap(); // Limpia el mapa de polilíneas
-    fetchLatestLocation(); // Actualiza la ubicación con el ID seleccionado
-}
-
-// Función para redondear a 6 decimales
-function roundToThreeDecimals(num) {
-    return Number(num.toFixed(6));
+function updateRoute(newPoint) {
+    path.push(newPoint);  // Añade el nuevo punto al array `path`
+    polyline.setPath(path);  // Actualiza la polilínea con la nueva ruta
 }
 
 // Función para convertir UTC a la hora local
@@ -158,14 +112,25 @@ function convertToLocalTime(utcDateString) {
     return formattedDate;
 }
 
+// Función para obtener datos OBD y actualizarlos en la interfaz
+function fetchObdData() {
+    fetch('/obd_data')
+        .then(response => response.json())
+        .then(data => {
+            // Verifica que el dato sea un número antes de aplicar toFixed
+            document.getElementById('rpm').innerText = typeof data.rpm === 'number' ? data.rpm.toFixed(2) : 'N/A';
+            document.getElementById('speed').innerText = typeof data.speed === 'number' ? data.speed.toFixed(2) : 'N/A';
+        })
+        .catch(err => console.error('Error fetching OBD data:', err));
+}
+
+
 // Actualiza la ubicación cada 10 segundos
 setInterval(fetchLatestLocation, 10000);
 
 
-
-
-
-
+// Actualiza los datos de OBD cada 10 segundos
+setInterval(fetchObdData, 10000);
 
 //--------------------------------HISTORICAL--------------------------------------------
 async function initHistoricalMap() {
