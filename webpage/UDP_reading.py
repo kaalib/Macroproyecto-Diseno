@@ -12,7 +12,6 @@ db = pymysql.connect(
     password=os.getenv("DB_PASSWORD"),
     database=os.getenv("DB_DATABASE")
 )
-
 cursor = db.cursor()
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,27 +26,18 @@ while True:
     try:
         data_values = data.decode().split(',')
 
-        if len(data_values) >= 3:  # Verificar que haya al menos latitud, longitud y timestamp
-            latitude, longitude, timestamp = data_values[:3]
-            latitude = float(latitude)
-            longitude = float(longitude)
 
-            # Insertar en la tabla coordinates
-            sql = "INSERT INTO coordinates (latitude, longitude, timestamp) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (latitude, longitude, timestamp))
-            print(f"Datos insertados en coordinates: latitud={latitude}, longitud={longitude}, timestamp={timestamp}")
+        latitude = float(data_values[0])         
+        longitude = float(data_values[1])        
+        timestamp = data_values[2]                
+        rpm = float(data_values[3])               
+        speed = float(data_values[4])           
+        id = int(data_values[5])              
 
-        if len(data_values) >= 5:  # Verificar que haya rpm y speed
-            rpm, speed = data_values[3:5]
-            rpm = float(rpm)
-            speed = float(speed)
+        sql = "INSERT INTO coordinates (latitude, longitude, timestamp, rpm, speed, id) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(sql, (latitude, longitude, timestamp, rpm, speed, id))
+        print(f"Datos insertados en coordinates: latitud={latitude}, longitud={longitude}, timestamp={timestamp}, rpm={rpm}, speed={speed}, id={id}")
 
-            # Insertar en la tabla OBD usando el mismo timestamp de coordinates
-            sql = "INSERT INTO OBD (rpm, speed, timestamp) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (rpm, speed, timestamp))
-            print(f"Datos insertados en OBD: rpm={rpm}, speed={speed}, timestamp={timestamp}")
-
-        # Guardar los cambios en la base de datos
         db.commit()
 
     except Exception as e:
