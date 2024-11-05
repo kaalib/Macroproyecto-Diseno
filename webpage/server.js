@@ -31,7 +31,7 @@
         // Función para obtener datos de la base de datos para dos vehículos
         function fetchDataFromDatabase() {
             pool.query(
-                            `(SELECT * 
+                    `(SELECT * 
                     FROM coordinates 
                     WHERE ID = 1 
                     ORDER BY Timestamp DESC 
@@ -42,15 +42,12 @@
                     WHERE ID = 2 
                     ORDER BY timestamp DESC 
                     LIMIT 1);`,
-                (err, results) => {
-                    if (err) {
-                        console.error('Error fetching data:', err);
-                        return;
+                    (err, results) => {
+                        if (err) {
+                            console.error('Error fetching data:', err);
+                            return;
                     }
                     if (results.length > 0) {
-                        // Inicializa las variables para almacenar datos de ambos vehículos
-                        let locationData = null;
-                        let locationData2 = null;
 
                         // Asigna datos de cada vehículo según el ID
                         results.forEach(row => {
