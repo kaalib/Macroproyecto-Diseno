@@ -78,6 +78,9 @@ function fetchLatestLocation() {
             map.setCenter(latLng);
             marker.setPosition(latLng);
 
+            document.getElementById('rpm').innerText = data.locationData.rpm;
+            document.getElementById('speed').innerText = data.locationData.speed;
+            
             updateRoute(latLng);
         })
         .catch(err => console.error('Error fetching latest location:', err));
