@@ -14,7 +14,7 @@
             database: process.env.DB_DATABASE
         });
 
-        let locationData1 = {
+        let locationData = {
             latitude: 'N/A',
             longitude: 'N/A',
             timestamp: 'N/A'
@@ -49,13 +49,13 @@
                     }
                     if (results.length > 0) {
                         // Inicializa las variables para almacenar datos de ambos vehículos
-                        let locationData1 = null;
+                        let locationData = null;
                         let locationData2 = null;
 
                         // Asigna datos de cada vehículo según el ID
                         results.forEach(row => {
                             if (row.id === 1) {
-                                locationData1 = {
+                                locationData = {
                                     latitude: row.latitude,
                                     longitude: row.longitude,
                                     timestamp: row.timestamp,
@@ -73,8 +73,8 @@
                             }
                         });
 
-                        // Usa locationData1 y locationData2 como necesites en el resto del código
-                        console.log('Location Data for Vehicle 1:', locationData1);
+                        // Usa locationData y locationData2 como necesites en el resto del código
+                        console.log('Location Data for Vehicle 1:', locationData);
                         console.log('Location Data for Vehicle 2:', locationData2);
                     }
                 }
@@ -92,8 +92,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/data', (req, res) => {
     res.json({
-        vehicle1: locationData1,
-        vehicle2: locationData2
+        locationData,
+        locationData2
     });
 });
 
