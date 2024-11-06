@@ -28,7 +28,6 @@ let locationData2 = {
 
 
 
-// Función para obtener datos de la base de datos para dos vehículos
 function fetchDataFromDatabase() {
     pool.query(
             `(SELECT * 
@@ -49,7 +48,6 @@ function fetchDataFromDatabase() {
             }
             if (results.length > 0) {
 
-                // Asigna datos de cada vehículo según el ID
                 results.forEach(row => {
                     if (row.id === 1) {
                         locationData = {
@@ -70,7 +68,6 @@ function fetchDataFromDatabase() {
                     }
                 });
 
-                // Usa locationData y locationData2 como necesites en el resto del código
                 console.log('Location Data for Vehicle 1:', locationData);
                 console.log('Location Data for Vehicle 2:', locationData2);
             }
@@ -78,8 +75,6 @@ function fetchDataFromDatabase() {
     );
 }
 
-
-// Llama a la función cada 8 segundos
 setInterval(fetchDataFromDatabase, 8000);
 
 
@@ -109,19 +104,17 @@ app.get('/api_key', (req, res) => {
     res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
-//Handled GET request to the '/historics' endpoint
 app.get('/historics', (req, res) => {
     const { startDate, endDate } = req.query;
 
-    // Validate that both start date and end date are provided
     if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
+        return res.status(400).json({ error: 'Please provide both startDate and endDate query parameters.' });
     }
-    // Construct SQL query to retrieve locations within the specified data range
-    const query = `SELECT * FROM coordinates WHERE timestamp BETWEEN '${startDate}' AND '${endDate}'`;
+    const query = `SELECT * FROM coordinates WHERE timestamp BETWEEN '${startDate}' AND '${endDate}' AND ID IN (1, 2)`;
+
     pool.query(query, (err, results) => {
         if (err) throw err;
-        res.json(results)
+        res.json(results);
     });
 });
 
@@ -154,12 +147,10 @@ app.get('/geocode', async (req, res) => {
 app.get('/nearbyhistorics', (req, res) => {
     const { lat, lng, radius = 500, startDate, endDate } = req.query;
 
-    // Validar que se han proporcionado lat, lng, startDate y endDate
     if (!lat || !lng || !startDate || !endDate) {
         return res.status(400).json({ error: 'Lat, Lng, startDate y endDate son parámetros requeridos.' });
     }
 
-    // Consulta SQL para filtrar por ubicación (usando el radio) y por rango de fechas
     const query = `
         SELECT *, 
         (6371000 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(longitude) - radians(${lng})) + sin(radians(${lat})) * sin(radians(latitude)))) AS distance
