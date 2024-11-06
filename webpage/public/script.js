@@ -1,8 +1,7 @@
 let map;
-let marker;
-
-let polyline;
+let marker, marker2, polyline, polyline2;
 let path = [];
+let path2 =[];
 let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
@@ -10,39 +9,6 @@ let infoWindows = [];
 let markers = [];
 let results = []; 
 
-//REAL TIME MAP
-function initMap() {
-
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 0, lng: 0 },
-        zoom: 14
-    });
-
-    marker = new google.maps.Marker({
-        position: { lat: 0, lng: 0 },
-        map: map
-    });
-
-
-    // Inicializa la polilínea que seguirá la ruta personalizada
-    polyline = new google.maps.Polyline({
-        path: path,
-        strokeColor: '#6F2F9E', // Color morado
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
-        geodesic: true,
-        map: map
-    });
-    initAutocomplete();
-    fetchLatestLocation(); // Llama a la función que obtiene la ubicación
-}
-
-// Función para redondear a 6 decimales
-function roundToThreeDecimals(num) {
-    return Number(num.toFixed(6));
-}
-
-// Carga el mapa con la clave de la API de Google Maps
 function loadMap() {
     fetch('/api_key')
         .then(response => response.json())
@@ -54,6 +20,128 @@ function loadMap() {
             document.head.appendChild(script);
         })
         .catch(err => console.error('Error fetching API key:', err));
+}
+
+//---------------------REAL TIME MAP------------------------------------------
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 10.96854, lng: -74.82149 },
+        zoom: 14
+    });
+
+    marker = new google.maps.Marker({
+        position: { lat: 0, lng: 0 },
+        map: map
+    });
+
+    marker2 = new google.maps.Marker({
+        position: { lat: 0, lng: 0 },
+        map: map
+    });
+
+    polyline = new google.maps.Polyline({
+        path: path,
+        strokeColor: '#6F2F9E', // Color morado
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+        geodesic: true,
+        map: map
+    });
+
+    polyline2 = new google.maps.Polyline({
+        path: path2,
+        strokeColor: '#FF0000', // Color rojo para el vehículo 2
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+        geodesic: true,
+        map: map
+    });
+
+    fetchLatestLocation(); // Cargar ubicación para vehículo 1 por defecto
+    fetchLatestLocation2(); // Cargar ubicación para vehículo 2 por defecto (aunque lo ocultaremos si es necesario)
+    updateVisibility(); // Establecer la visibilidad correcta al cargar
+
+    // Escuchar el cambio en el selector para mostrar u ocultar las rutas
+    document.getElementById('vehicleDropdown').addEventListener('change', updateVisibility);
+}
+
+// Función para redondear a 6 decimales
+function roundToThreeDecimals(num) {
+    return Number(num.toFixed(6));
+}
+
+function updateVisibility() {
+    const selectedVehicle = document.getElementById('vehicleDropdown').value;
+
+    if (selectedVehicle === 'all') {
+        // Mostrar ambos vehículos y sus rutas
+        marker.setMap(map);
+        polyline.setMap(map);
+        marker2.setMap(map);
+        polyline2.setMap(map);
+
+        // Mostrar los datos de ambos vehículos
+        document.getElementById('latitude').parentElement.style.display = 'block';
+        document.getElementById('longitude').parentElement.style.display = 'block';
+        document.getElementById('date').parentElement.style.display = 'block';
+        document.getElementById('time').parentElement.style.display = 'block';
+        document.getElementById('rpm').parentElement.style.display = 'block';
+        document.getElementById('speed').parentElement.style.display = 'block';
+
+        document.getElementById('latitude2').parentElement.style.display = 'block';
+        document.getElementById('longitude2').parentElement.style.display = 'block';
+        document.getElementById('date2').parentElement.style.display = 'block';
+        document.getElementById('time2').parentElement.style.display = 'block';
+
+    } else if (selectedVehicle === '1') {
+        // Mostrar solo el vehículo 1
+        marker.setMap(map);
+        polyline.setMap(map);
+        marker2.setMap(null); // Ocultar vehículo 2
+        polyline2.setMap(null); // Ocultar ruta de vehículo 2
+
+        // Mostrar solo los datos de vehículo 1
+        document.getElementById('latitude').parentElement.style.display = 'block';
+        document.getElementById('longitude').parentElement.style.display = 'block';
+        document.getElementById('date').parentElement.style.display = 'block';
+        document.getElementById('time').parentElement.style.display = 'block';
+        document.getElementById('rpm').parentElement.style.display = 'block';
+        document.getElementById('speed').parentElement.style.display = 'block';
+
+        // Ocultar los datos de vehículo 2
+        document.getElementById('latitude2').parentElement.style.display = 'none';
+        document.getElementById('longitude2').parentElement.style.display = 'none';
+        document.getElementById('date2').parentElement.style.display = 'none';
+        document.getElementById('time2').parentElement.style.display = 'none';
+        const latLng1 = new google.maps.LatLng(parseFloat(document.getElementById('latitude').innerText), parseFloat(document.getElementById('longitude').innerText));
+        map.panTo(latLng1);
+
+
+
+    } else if (selectedVehicle === '2') {
+        // Mostrar solo el vehículo 2
+        marker2.setMap(map);
+        polyline2.setMap(map);
+        marker.setMap(null); // Ocultar vehículo 1
+        polyline.setMap(null); // Ocultar ruta de vehículo 1
+
+        // Mostrar solo los datos de vehículo 2
+        document.getElementById('latitude2').parentElement.style.display = 'block';
+        document.getElementById('longitude2').parentElement.style.display = 'block';
+        document.getElementById('date2').parentElement.style.display = 'block';
+        document.getElementById('time2').parentElement.style.display = 'block';
+
+        // Ocultar los datos de vehículo 1
+        document.getElementById('latitude').parentElement.style.display = 'none';
+        document.getElementById('longitude').parentElement.style.display = 'none';
+        document.getElementById('date').parentElement.style.display = 'none';
+        document.getElementById('time').parentElement.style.display = 'none';
+        document.getElementById('rpm').parentElement.style.display = 'none';
+        document.getElementById('speed').parentElement.style.display = 'none';
+        const latLng2 = new google.maps.LatLng(parseFloat(document.getElementById('latitude2').innerText), parseFloat(document.getElementById('longitude2').innerText));
+        map.panTo(latLng2);
+    }
+
 }
 
 let shouldFetch = true;
@@ -75,27 +163,55 @@ function fetchLatestLocation() {
             document.getElementById('time').innerText = time;
 
             const latLng = new google.maps.LatLng(roundedLat, roundedLng);
-            map.setCenter(latLng);
             marker.setPosition(latLng);
 
             document.getElementById('rpm').innerText = data.locationData.rpm;
             document.getElementById('speed').innerText = data.locationData.speed;
-            
-            updateRoute(latLng);
+
+            path.push(latLng);
+            polyline.setPath(path);
+
+            const selectorValue = document.getElementById('vehicleDropdown').value;
+            if (selectorValue === '1') {
+                map.panTo(latLng);
+            }
         })
-        .catch(err => console.error('Error fetching latest location:', err));
-}
- 
-
-// Función para reactivar fetchLatestLocation
-function activateFetchLatestLocation() {
-    shouldFetch = true; 
+        .catch(err => console.error('Error fetching latest location for vehicle 1:', err));
 }
 
-function updateRoute(newPoint) {
-    path.push(newPoint);  // Añade el nuevo punto al array `path`
-    polyline.setPath(path);  // Actualiza la polilínea con la nueva ruta
+function fetchLatestLocation2() {
+    if (!shouldFetch) return;
+    fetch('/data2')  // Datos del segundo vehículo
+        .then(response => response.json())
+        .then(data => {
+            const roundedLat = roundToThreeDecimals(data.locationData2.latitude);
+            const roundedLng = roundToThreeDecimals(data.locationData2.longitude);
+
+            document.getElementById('latitude2').innerText = roundedLat;
+            document.getElementById('longitude2').innerText = roundedLng;
+
+            const timestamp = convertToLocalTime(data.locationData2.timestamp);
+            const [date, time] = timestamp.split(', ');
+            document.getElementById('date2').innerText = date;
+            document.getElementById('time2').innerText = time;
+
+            const latLng = new google.maps.LatLng(roundedLat, roundedLng);
+            marker2.setPosition(latLng);
+
+            path2.push(latLng);
+            polyline2.setPath(path2);
+
+            const selectorValue = document.getElementById('vehicleDropdown').value;
+            if (selectorValue === '2') {
+                map.panTo(latLng);
+            }
+        })
+        .catch(err => console.error('Error fetching latest location for vehicle 2:', err));
 }
+
+// Actualiza la ubicación cada 10 segundos
+setInterval(fetchLatestLocation, 10000);
+setInterval(fetchLatestLocation2, 10000);
 
 // Función para convertir UTC a la hora local
 function convertToLocalTime(utcDateString) {
@@ -114,11 +230,6 @@ function convertToLocalTime(utcDateString) {
     const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(localDate);
     return formattedDate;
 }
-
-
-
-// Actualiza la ubicación cada 10 segundos
-setInterval(fetchLatestLocation, 10000);
 
 
 
