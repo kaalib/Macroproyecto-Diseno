@@ -53,6 +53,12 @@
             </div>
             <div class="col-12 text-center">
                 <button id="historicalDataBtn" class="btn btn-primary btn-sm">Get Historical Data</button>
+                <!-- Dropdown for selecting vehicle in Real Time -->
+                <select id="vehicleDropdown" class="form-select form-select-sm w-auto">
+                    <option value="all" selected>All the vehicles</option>
+                    <option value="1">Vehicle 1</option>
+                    <option value="2">Vehicle 2</option>
+                </select>
             </div>
         </div>
 
@@ -103,6 +109,14 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- Dropdown for selecting vehicle in Historical, below the main container -->
+            <div class="col-12 text-center mt-2">
+                <select id="vehicleDropdownHistorical" class="form-select form-select-sm w-auto">
+                    <option value="all" selected>All the vehicles</option>
+                    <option value="1">Vehicle 1</option>
+                    <option value="2">Vehicle 2</option>
+                </select>
             </div>
             <div class="col-12">
                 <button id="realtimeBtn" class="btn btn-primary btn-sm position-fixed start-0 top-0 m-3 d-flex align-items-center gap-2">
