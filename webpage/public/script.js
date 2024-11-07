@@ -81,17 +81,8 @@ function updateVisibility() {
         marker2.setMap(map);
         polyline2.setMap(map);
 
-        document.getElementById('latitude').parentElement.style.display = 'block';
-        document.getElementById('longitude').parentElement.style.display = 'block';
-        document.getElementById('date').parentElement.style.display = 'block';
-        document.getElementById('time').parentElement.style.display = 'block';
-        document.getElementById('rpm').parentElement.style.display = 'block';
-        document.getElementById('speed').parentElement.style.display = 'block';
-
-        document.getElementById('latitude2').parentElement.style.display = 'block';
-        document.getElementById('longitude2').parentElement.style.display = 'block';
-        document.getElementById('date2').parentElement.style.display = 'block';
-        document.getElementById('time2').parentElement.style.display = 'block';
+        document.getElementById('vehicle1').style.display = 'block';
+        document.getElementById('vehicle2').style.display = 'block';
 
     } else if (selectedVehicle === '1') {
         marker.setMap(map);
@@ -99,17 +90,9 @@ function updateVisibility() {
         marker2.setMap(null); 
         polyline2.setMap(null); 
 
-        document.getElementById('latitude').parentElement.style.display = 'block';
-        document.getElementById('longitude').parentElement.style.display = 'block';
-        document.getElementById('date').parentElement.style.display = 'block';
-        document.getElementById('time').parentElement.style.display = 'block';
-        document.getElementById('rpm').parentElement.style.display = 'block';
-        document.getElementById('speed').parentElement.style.display = 'block';
+        document.getElementById('vehicle1').style.display = 'block';
+        document.getElementById('vehicle2').style.display = 'none';
 
-        document.getElementById('latitude2').parentElement.style.display = 'none';
-        document.getElementById('longitude2').parentElement.style.display = 'none';
-        document.getElementById('date2').parentElement.style.display = 'none';
-        document.getElementById('time2').parentElement.style.display = 'none';
         const latLng1 = new google.maps.LatLng(parseFloat(document.getElementById('latitude').innerText), parseFloat(document.getElementById('longitude').innerText));
         map.panTo(latLng1);
 
@@ -122,17 +105,9 @@ function updateVisibility() {
         marker.setMap(null); 
         polyline.setMap(null); 
 
-        document.getElementById('latitude2').parentElement.style.display = 'block';
-        document.getElementById('longitude2').parentElement.style.display = 'block';
-        document.getElementById('date2').parentElement.style.display = 'block';
-        document.getElementById('time2').parentElement.style.display = 'block';
+        document.getElementById('vehicle1').style.display = 'none';
+        document.getElementById('vehicle2').style.display = 'block';
 
-        document.getElementById('latitude').parentElement.style.display = 'none';
-        document.getElementById('longitude').parentElement.style.display = 'none';
-        document.getElementById('date').parentElement.style.display = 'none';
-        document.getElementById('time').parentElement.style.display = 'none';
-        document.getElementById('rpm').parentElement.style.display = 'none';
-        document.getElementById('speed').parentElement.style.display = 'none';
         const latLng2 = new google.maps.LatLng(parseFloat(document.getElementById('latitude2').innerText), parseFloat(document.getElementById('longitude2').innerText));
         map.panTo(latLng2);
     }
@@ -243,7 +218,7 @@ async function initHistoricalMap() {
 
     marker = new AdvancedMarkerElement({
         map: map,
-        position: initialPosition,
+
         title: "Current Location"
     });
 
@@ -397,19 +372,19 @@ function drawPolylineHistorics(origin, destination, timestamp, carId) {
         polylineColor = '#FF0000';  
     }
 
-    const startMarker = new google.maps.Marker({
-        position: origin,
-        map: map,
-        title: "Inicio",
-        icon: {
-            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-            scale: 3,
-            fillColor: markerColor,
-            fillOpacity: 1,
-            strokeWeight: 2,
-            rotation: bearing
-        }
-    });
+        const startMarker = new google.maps.Marker({
+            position: origin,
+            map: map,
+            title: "Inicio",
+            icon: {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 3,
+                fillColor: markerColor,
+                fillOpacity: 1,
+                strokeWeight: 2,
+                rotation: bearing
+            }
+        });
 
     markers.push({ marker: startMarker, carId });
 
@@ -446,12 +421,49 @@ function drawPolylineHistorics(origin, destination, timestamp, carId) {
     polylines.push({ polyline, carId });
 }
 
+function setupSlider(filteredSliderData) {
+    const slider = document.getElementById('marker-slider');
+    slider.max = filteredSliderData.length - 1;
+    slider.value = 0;
+    slider.style.display = 'block';
+
+    updateMarkerPosition(0, filteredSliderData); // Pasa los datos filtrados a updateMarkerPosition
+
+    slider.addEventListener('input', (event) => {
+        const index = parseInt(event.target.value);
+        updateMarkerPosition(index, filteredSliderData); // Pasa los datos filtrados al mover el slider
+    });
+}
+
+
+function updateMarkerPosition(index, filteredSliderData) {
+    if (marker) {
+        marker.setMap(null);
+    }
+
+    const position = new google.maps.LatLng(filteredSliderData[index].latitude, filteredSliderData[index].longitude); // Usa los datos filtrados
+    marker = new google.maps.Marker({
+        position: position,
+        map: map,
+        title: filteredSliderData[index].timestamp
+    });
+
+    map.panTo(position);
+}
 
 
 const dropdown = document.getElementById('vehicleDropdownHistorical');
-
 dropdown.addEventListener('change', function() {
     const selectedValue = dropdown.value;
+
+    let filteredSliderData = results;
+    if (selectedValue === '1') {
+        filteredSliderData = results.filter(data => data.id === 1);
+    } else if (selectedValue === '2') {
+        filteredSliderData = results.filter(data => data.id === 2);
+    }
+
+    setupSlider(filteredSliderData);
 
     for (let { polyline, carId } of polylines) {
         if (selectedValue === 'all') {
@@ -682,34 +694,7 @@ document.getElementById('searchbyaddress').addEventListener('click', () => {
     }
 });
 
-function setupSlider(maxValue) {
-    const slider = document.getElementById('marker-slider');
-    slider.max = maxValue - 1;
-    slider.value = 0;
-    slider.style.display = 'block';
 
-    updateMarkerPosition(0);
-
-    slider.addEventListener('input', (event) => {
-        const index = parseInt(event.target.value);
-        updateMarkerPosition(index);
-    });
-}
-
-function updateMarkerPosition(index) {
-    if (marker) {
-        marker.setMap(null);
-    }
-
-    const position = new google.maps.LatLng(results[index].latitude, results[index].longitude);
-    marker = new google.maps.Marker({
-        position: position,
-        map: map,
-        title: results[index].timestamp
-    });
-
-    map.panTo(position);
-}
 
 let isHistoricalVisible = false;
 

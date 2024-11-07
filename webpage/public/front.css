@@ -6,23 +6,107 @@ body {
 }
 
 .logo-image {
-    height: 60px;
+    height: 70px;
     width: auto;
 }
 
 
+
 .data {
-    color: #000000;
-    text-align: center;
-    padding: 8px;
-    background-color: #f9f9f9;
+    font-size: 0.65rem; /* Reducir aún más el tamaño de fuente */
+    padding: 2.5px 4.5px; /* Disminuir aún más el padding */
+    background-color: #ffffff;
     border: 1px solid #6F2F9E;
-    border-radius: 8px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-bottom: 2px; /* Reducir el espacio entre los elementos */
+    text-align: left;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+.vehicle-container {
+    background-color: #f1f1f1;
+    border: 1px solid #6F2F9E;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 20px;
+    min-height: 130px;
+    
+}
+
+
+
+.vehicle-container h5 {
+    color: #6F2F9E;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem; /* Reducir el tamaño de fuente */
+    margin-bottom: 8px;
+}
+
+
+.vehicle-container {
+    margin-top: 20px;
+}
+
+.additional-container {
+    background-color: #f1f1f1;
+    border: 1px solid #6F2F9E;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    min-height: 100px;  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Selector específico */
+.additional-container select {
     font-size: 0.85rem;
 }
 
-.btn-primary, .btn-secondary, #realtimeBtn {
+/* Asegurando que la estructura sea responsive */
+@media (max-width: 768px) {
+    .additional-container {
+        margin-top: 20px;
+    }
+}
+
+
+
+#realtimeBtn,
+#historicalDataBtn {
+    background-color: #6F2F9E !important;
+    border-color: #6F2F9E !important;
+    font-size: 0.8rem !important;
+    padding: 0.6rem 0.9rem !important;
+    margin-left: 0.7rem !important;
+    margin-top: auto !important;
+    margin-bottom: auto;
+}
+
+
+
+#vehicleDropdown,#vehicleDropdownHistorical {
+    min-width: 160px;
+    border: 1px solid #6F2F9E;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #000;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 13px; 
+}
+
+#vehicleDropdown,#vehicleDropdownHistorical:hover {
+    border-color: #5A228A;
+}
+
+#searchbyaddress {
     background-color: #6F2F9E;
     border-color: #6F2F9E;
     transition: all 0.3s ease;
@@ -30,11 +114,22 @@ body {
     padding: 0.25rem 0.5rem;
 }
 
+
+#gethistorical {
+    background-color: #6F2F9E;
+    border-color: #6F2F9E;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    margin-top: 5px;
+}
+
 #realtimeBtn{
     margin-top: 25px;
 }
 
-.btn-primary:hover, .btn-secondary:hover, #realtimeBtn:hover {
+#realtimeBtn:hover,
+#historicalDataBtn:hover, #gethistorical:hover {
     background-color: #5A228A;
     border-color: #5A228A;
     transform: translateY(-1px);
@@ -64,12 +159,38 @@ body {
 }
 
 .historical-card {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #f1f1f1;
+    border: 1px solid #6F2F9E;
+    border-radius: 6px;
+    max-width: 1200px; /* Ajusta este valor según lo que necesites */
+    width: 100%; /* Asegura que el contenedor ocupe el 100% del espacio disponible hasta el max-width */
+    margin-left: 40px;
+    margin-right: 0px;
+    
 }
 
 .historical-card .card-body {
-    padding: 0.5rem;
+    padding: 0.8rem;
 }
+
+.new-container {
+    background-color: #f1f1f1;
+    border: 1px solid #6F2F9E;
+    border-radius: 6px;
+    padding: 10px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra similar a la tarjeta histórica */
+    max-width: 500px; /* Puedes ajustar el valor según el tamaño que desees */
+    width: 100%; 
+   
+}
+
+
+
 
 .small-label {
     font-size: 0.75rem;
@@ -87,22 +208,6 @@ body {
     padding: 0.25rem 0.5rem;
 }
 
-#vehicleDropdown,#vehicleDropdownHistorical {
-    min-width: 120px; /* Ajusta este valor según tus necesidades */
-    border: 1px solid #6F2F9E; /* Color de borde similar al de los botones */
-    border-radius: 8px; /* Bordes redondeados para un look más suave */
-    background-color: #f9f9f9; /* Color de fondo similar al del contenedor de datos */
-    color: #000; /* Color de texto */
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    transition: all 0.3s ease; /* Transiciones suaves */
-}
-
-#vehicleDropdown,#vehicleDropdownHistorical:hover {
-    border-color: #5A228A; /* Cambio de color en hover */
-}
-
-
-
 
 
 #map {
@@ -111,6 +216,12 @@ body {
     width: 100%;
     border-radius: 15px;
     margin: 20px auto;
+}
+
+@media (min-width: 992px) {
+    .vehicle-container {
+        margin-bottom: 0; /* Eliminar el margen inferior en pantallas grandes */
+    }
 }
 
 @media (max-width: 768px) {
