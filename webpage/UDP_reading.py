@@ -32,12 +32,11 @@ while True:
         timestamp = data_values[2]                
         rpm = float(data_values[3])               
         speed = float(data_values[4])           
-        id = int(data_values[5])  
-        fuel = float(data_values[6])            
+        id = int(data_values[5])              
 
-        sql = "INSERT INTO coordinates (latitude, longitude, timestamp, rpm, speed, id, fuel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(sql, (latitude, longitude, timestamp, rpm, speed, id, fuel))
-        print(f"Datos insertados en coordinates: latitud={latitude}, longitud={longitude}, timestamp={timestamp}, rpm={rpm}, speed={speed}, id={id}, fuel={fuel}")
+        sql = "INSERT INTO coordinates (latitude, longitude, timestamp, rpm, speed, id) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(sql, (latitude, longitude, timestamp, rpm, speed, id))
+        print(f"Datos insertados en coordinates: latitud={latitude}, longitud={longitude}, timestamp={timestamp}, rpm={rpm}, speed={speed}, id={id}")
 
         db.commit()
 
