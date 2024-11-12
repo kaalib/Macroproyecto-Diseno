@@ -427,11 +427,11 @@ function setupSlider(filteredSliderData) {
     slider.value = 0;
     slider.style.display = 'block';
 
-    updateMarkerPosition(0, filteredSliderData); // Pasa los datos filtrados a updateMarkerPosition
+    updateMarkerPosition(0, filteredSliderData);
 
     slider.addEventListener('input', (event) => {
         const index = parseInt(event.target.value);
-        updateMarkerPosition(index, filteredSliderData); // Pasa los datos filtrados al mover el slider
+        updateMarkerPosition(index, filteredSliderData);
     });
 }
 
@@ -441,7 +441,7 @@ function updateMarkerPosition(index, filteredSliderData) {
         marker.setMap(null);
     }
 
-    const position = new google.maps.LatLng(filteredSliderData[index].latitude, filteredSliderData[index].longitude); // Usa los datos filtrados
+    const position = new google.maps.LatLng(filteredSliderData[index].latitude, filteredSliderData[index].longitude);
     marker = new google.maps.Marker({
         position: position,
         map: map,
@@ -677,8 +677,10 @@ document.getElementById('searchbyaddress').addEventListener('click', () => {
                                 data.forEach(item => {
                                     updateMapAndRouteHistorics(item.id, item.latitude, item.longitude, item.timestamp);
                                     document.getElementById('slider').style.display = 'block';
+                                    let filteredSliderData = results;
+                                    setupSlider(filteredSliderData);
                                 });
-                                setupSlider(data.length);
+                                
                             }
                         })
                         .catch(error => {
