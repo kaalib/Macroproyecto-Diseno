@@ -186,6 +186,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra similar a la tarjeta histórica */
     max-width: 500px; /* Puedes ajustar el valor según el tamaño que desees */
     width: 100%; 
+
    
 }
 
@@ -233,6 +234,26 @@ body {
         height: 30px;
     }
 
+    .row.justify-content-center.mt-3 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .new-container {
+        margin-top: 15px; /* Add some vertical spacing */
+        margin-left: 0; /* Remove horizontal margin */
+        width: 100%; /* Full width */
+        max-width: none; /* Remove max-width constraint */
+    }
+
+    .historical-card {
+        margin-left: 0; /* Remove left margin */
+        margin-right: 0; /* Remove right margin */
+        width: 100%; /* Full width */
+    }
+
+    
+
     #historicalControls .col-md-6 {
         margin-bottom: 5px;
     }
@@ -256,6 +277,14 @@ body {
         height: 25px;
     }
 }
+
+
+.new-container,
+.historical-card {
+    padding: 10px 5px; /* Tighter padding on smaller screens */
+}
+
+
 
 .custom-range {
     -webkit-appearance: none;
