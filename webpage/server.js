@@ -75,7 +75,7 @@ function fetchDataFromDatabase() {
     );
 }
 
-setInterval(fetchDataFromDatabase, 8000);
+setInterval(fetchDataFromDatabase, 6000);
 
 
 

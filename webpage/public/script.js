@@ -179,8 +179,8 @@ function fetchLatestLocation2() {
         .catch(err => console.error('Error fetching latest location for vehicle 2:', err));
 }
 
-setInterval(fetchLatestLocation, 10000);
-setInterval(fetchLatestLocation2, 10000);
+setInterval(fetchLatestLocation, 6000);
+setInterval(fetchLatestLocation2, 6000);
 
 function convertToLocalTime(utcDateString) {
     const localDate = new Date(utcDateString);
